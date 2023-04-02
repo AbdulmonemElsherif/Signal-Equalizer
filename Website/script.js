@@ -42,6 +42,12 @@ function updateSliders() {
   // Add new sliders to equalizer container
   const equalizerContainer = document.getElementById("equalizer-container");
   equalizerContainer.appendChild(sliders);
+  // Hide the sliders if no mode is selected
+  if (mode === "") {
+    equalizerContainer.classList.add("hidden");
+  } else {
+    equalizerContainer.classList.remove("hidden");
+  }
 }
 
 // Add event listener to mode selector

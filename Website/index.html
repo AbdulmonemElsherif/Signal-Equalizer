@@ -21,7 +21,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                   
+
                 </ul>
             </div>
         </nav>
@@ -90,10 +90,10 @@
                     </div>
                 </div>
             </div>
-            <div class="row" id="equalizer-container">
+            <div class="row">
                 <div class="col-md-12">
-                    <div class="card mb-3">
-                        <div class="card-header">
+                    <div class="card mb-3" >
+                        <div class="card-header"  id="equalizer-container">
                             <h2 class="mb-0">Equalizer Sliders</h2>
 
                             <div class="equalizer-mode">
@@ -106,122 +106,124 @@
                                     </option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="slider-group" id="uniform-range-sliders">
-                            <div class="form-group">
-                                <label for="slider1">Slider 1</label>
-                                <input type="range" class="form-control-range" id="slider1" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider2">Slider 2</label>
-                                <input type="range" class="form-control-range" id="slider2" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider3">Slider 3</label>
-                                <input type="range" class="form-control-range" id="slider3" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider4">Slider 4</label>
-                                <input type="range" class="form-control-range" id="slider4" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider5">Slider 5</label>
-                                <input type="range" class="form-control-range" id="slider5" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider6">Slider 6</label>
-                                <input type="range" class="form-control-range" id="slider6" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider7">Slider 7</label>
-                                <input type="range" class="form-control-range" id="slider7" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider8">Slider 8</label>
-                                <input type="range" class="form-control-range" id="slider8" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider9">Slider 9</label>
-                                <input type="range" class="form-control-range" id="slider9" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider10">Slider 10</label>
-                                <input type="range" class="form-control-range" id="slider10" min="0" max="100"
-                                    value="50">
-                            </div>
-                        </div>
-                        <div class="slider-group" id="vowels-sliders">
-                            <div class="form-group">
-                                <label for="slider-a">Slider A</label>
-                                <input type="range" class="form-control-range" id="slider-a" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-e">Slider E</label>
-                                <input type="range" class="form-control-range" id="slider-e" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-i">Slider I</label>
-                                <input type="range" class="form-control-range" id="slider-i" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-o">Slider O</label>
-                                <input type="range" class="form-control-range" id="slider-o" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-u">Slider U</label>
-                                <input type="range" class="form-control-range" id="slider-u" min="0" max="100"
-                                    value="50">
-                            </div>
-                        </div>
-                        <div class="slider-group" id="musical-instruments-sliders">
-                            <div class="form-group">
-                                <label for="slider-piano">Slider Piano</label>
-                                <input type="range" class="form-control-range" id="slider-piano" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-guitar">Slider Guitar</label>
-                                <input type="range" class="form-control-range" id="slider-guitar" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="slider-group" id="biological-signal-abnormalities-sliders">
-                                <div class="form-group">
-                                    <label for="slider-heartbeat">Slider Heartbeat</label>
-                                    <input type="range" class="form-control-range" id="slider-heartbeat" min="0"
-                                        max="100" value="50">
+                            <div hidden>
+                                <div class="slider-group" id="uniform-range-sliders">
+                                    <div class="form-group">
+                                        <label for="slider1">Slider 1</label>
+                                        <input type="range" class="form-control-range" id="slider1" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider2">Slider 2</label>
+                                        <input type="range" class="form-control-range" id="slider2" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider3">Slider 3</label>
+                                        <input type="range" class="form-control-range" id="slider3" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider4">Slider 4</label>
+                                        <input type="range" class="form-control-range" id="slider4" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider5">Slider 5</label>
+                                        <input type="range" class="form-control-range" id="slider5" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider6">Slider 6</label>
+                                        <input type="range" class="form-control-range" id="slider6" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider7">Slider 7</label>
+                                        <input type="range" class="form-control-range" id="slider7" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider8">Slider 8</label>
+                                        <input type="range" class="form-control-range" id="slider8" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider9">Slider 9</label>
+                                        <input type="range" class="form-control-range" id="slider9" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider10">Slider 10</label>
+                                        <input type="range" class="form-control-range" id="slider10" min="0" max="100"
+                                            value="50">
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="slider-brain-waves">Slider Brain Waves</label>
-                                    <input type="range" class="form-control-range" id="slider-brain-waves" min="0"
-                                        max="100" value="50">
+                                <div class="slider-group" id="vowels-sliders">
+                                    <div class="form-group">
+                                        <label for="slider-a">Slider A</label>
+                                        <input type="range" class="form-control-range" id="slider-a" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-e">Slider E</label>
+                                        <input type="range" class="form-control-range" id="slider-e" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-i">Slider I</label>
+                                        <input type="range" class="form-control-range" id="slider-i" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-o">Slider O</label>
+                                        <input type="range" class="form-control-range" id="slider-o" min="0" max="100"
+                                            value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-u">Slider U</label>
+                                        <input type="range" class="form-control-range" id="slider-u" min="0" max="100"
+                                            value="50">
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="slider-muscle-tension">Slider Muscle Tension</label>
-                                    <input type="range" class="form-control-range" id="slider-muscle-tension" min="0"
-                                        max="100" value="50">
+                                <div class="slider-group" id="musical-instruments-sliders">
+                                    <div class="form-group">
+                                        <label for="slider-piano">Slider Piano</label>
+                                        <input type="range" class="form-control-range" id="slider-piano" min="0"
+                                            max="100" value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-guitar">Slider Guitar</label>
+                                        <input type="range" class="form-control-range" id="slider-guitar" min="0"
+                                            max="100" value="50">
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="slider-respiration">Slider Respiration</label>
-                                    <input type="range" class="form-control-range" id="slider-respiration" min="0"
-                                        max="100" value="50">
-                                </div>
-                                <div class="form-group">
-                                    <label for="slider-blood-pressure">Slider Blood Pressure</label>
-                                    <input type="range" class="form-control-range" id="slider-blood-pressure" min="0"
-                                        max="100" value="50">
+                                <div class="slider-group" id="biological-signal-abnormalities-sliders">
+                                    <div class="form-group">
+                                        <label for="slider-heartbeat">Slider Heartbeat</label>
+                                        <input type="range" class="form-control-range" id="slider-heartbeat" min="0"
+                                            max="100" value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-brain-waves">Slider Brain Waves</label>
+                                        <input type="range" class="form-control-range" id="slider-brain-waves" min="0"
+                                            max="100" value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-muscle-tension">Slider Muscle Tension</label>
+                                        <input type="range" class="form-control-range" id="slider-muscle-tension"
+                                            min="0" max="100" value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-respiration">Slider Respiration</label>
+                                        <input type="range" class="form-control-range" id="slider-respiration" min="0"
+                                            max="100" value="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="slider-blood-pressure">Slider Blood Pressure</label>
+                                        <input type="range" class="form-control-range" id="slider-blood-pressure"
+                                            min="0" max="100" value="50">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -229,7 +231,7 @@
                 </div>
             </div>
         </div>
-        </div>
+
     </main>
     <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
