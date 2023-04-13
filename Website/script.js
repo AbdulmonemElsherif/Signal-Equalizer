@@ -55,3 +55,41 @@ modeSelector.addEventListener("change", updateSliders);
 
 // Call updateSliders function to initialize equalizer sliders
 updateSliders();
+var wavesurfer;
+
+window.addEventListener("load", () => {
+  wavesurfer = WaveSurfer.create({
+    container: document.querySelector("#waveform"),
+    waveColor: "#D9DCFF",
+    progressColor: "#4353FF",
+    cursorColor: "#4353FF",
+    barWidth: 3,
+    barRadius: 3,
+    cursorWidth: 1,
+    height: 200,
+    barGap: 3,
+  });
+
+  // Add Spectrogram plugin to Wavesurfer instance
+  wavesurfer.addPlugin(
+    WaveSurfer.spectrogram.create({
+      container: document.querySelector("#inputspectrogram"),
+      fftSamples: 256, // Number of samples for the Fast Fourier Transform (FFT)
+      labels: true, // Show frequency labels on the spectrogram
+      responsive: true, // Make the spectrogram responsive to container size changes
+    })
+  );
+
+  document.getElementById("formFile").addEventListener("change", (event) => {
+    var file = event.target.files[0];
+    var fileURL = URL.createObjectURL(file);
+    wavesurfer.load(fileURL);
+  });
+});
+
+  document.getElementById("playButton").addEventListener("click", () => {
+    wavesurfer.play();
+  });
+  document.getElementById("pauseButton").addEventListener("click", () => {
+    wavesurfer.pause();
+  });

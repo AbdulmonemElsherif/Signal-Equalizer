@@ -11,6 +11,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
+    <!-- <script src="wavesurfer.min.js"></script> -->
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -178,8 +181,11 @@
                             <h5 class="mb-0">Input Signal Viewer</h5>
                         </div>
                         <div class="card-body">
-                            <canvas id="input-signal-canvas"></canvas>
-                            <audio controls class="w-100"><source src="horse.ogg" type="audio/ogg"></audio>
+                            <div id="waveform"></div>
+                            <button id="playButton">Play</button>
+                            <button id="pauseButton">Pause</button>
+                            <!-- <canvas id="input-signal-canvas"></canvas>
+                            <audio controls class="w-100"><source src="horse.ogg" type="audio/ogg"></audio> -->
                             </div>
                         </div>
                     </div>
@@ -202,7 +208,8 @@
                             <h5>Input Spectrogram</h5>
                         </div>
                         <div class="card-body">
-                            <canvas id="input-spectrogram-canvas"></canvas>
+                            <div id="inputspectrogram"></div>
+                            <!-- <canvas id="input-spectrogram-canvas"></canvas> -->
                         </div>
                     </div>
                 </div>
