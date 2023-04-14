@@ -12,6 +12,7 @@
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
     <!-- <script src="wavesurfer.min.js"></script> -->
+    <script src="https://kit.fontawesome.com/2c36e9b7b1.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/wavesurfer.js"></script>
     <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -182,8 +183,12 @@
                         </div>
                         <div class="card-body">
                             <div id="inputwave"></div>
-                            <button id="playButton">Play</button>
-                            <button id="pauseButton">Pause</button>
+                            <div class="inputcontrols">
+                                <button class="playbutton btn btn-primary"><i class="fas fa-play"></i></button>
+                                <button class="pausebutton btn btn-primary"><i class="fas fa-pause"></i></button>
+                                <button class="stopbutton btn btn-primary"><i class="fas fa-stop"></i></button>
+                                <input type="range" id="input-signal-speed" class="playbackRateSlider" min="0.5" max="2" step="0.1" value="1">
+                            </div>
                             <!-- <canvas id="input-signal-canvas"></canvas>
                             <audio controls class="w-100"><source src="horse.ogg" type="audio/ogg"></audio> -->
                             </div>
@@ -197,8 +202,12 @@
                             <div class="card-body">
                                 <!-- <canvas id="output-signal-canvas"></canvas> -->
                                 <div id="outputwave"></div>
-                                <button id="playButton">Play</button>
-                                <button id="pauseButton">Pause</button>
+                                <div class="outputcontrols">
+                                    <button class="playbutton btn btn-primary"><i class="fas fa-play"></i></button>
+                                    <button class="pausebutton btn btn-primary"><i class="fas fa-pause"></i></button>
+                                    <button class="stopbutton btn btn-primary"><i class="fas fa-stop"></i></button>
+                                    <input type="range" id="input-signal-speed" class="playbackRateSlider" min="0.5" max="2" step="0.1" value="1">
+                                </div>
                             <!-- <audio controls class="w-100"><source src="horse.ogg" type="audio/ogg"></audio> -->
                                 </div>
                             </div>
