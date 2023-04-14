@@ -1,10 +1,10 @@
 // Define variables for input and output signal viewers
-const inputSignalViewer = document.getElementById("input-signal-viewer");
-const outputSignalViewer = document.getElementById("output-signal-viewer");
+const inputWave = document.getElementById("inputwave");
+const outputWave = document.getElementById("outputwave");
 
 // Define variables for input and output spectrograms
-const inputSpectrogram = document.getElementById("input-spectrogram");
-const outputSpectrogram = document.getElementById("output-spectrogram");
+const inputSpectrogram = document.getElementById("inputspectrogram");
+const outputSpectrogram = document.getElementById("outputspectrogram");
 
 // Define variables for equalizer sliders
 let sliders;
@@ -55,41 +55,61 @@ modeSelector.addEventListener("change", updateSliders);
 
 // Call updateSliders function to initialize equalizer sliders
 updateSliders();
-var wavesurfer;
 
-window.addEventListener("load", () => {
-  wavesurfer = WaveSurfer.create({
-    container: document.querySelector("#waveform"),
-    waveColor: "#D9DCFF",
-    progressColor: "#4353FF",
-    cursorColor: "#4353FF",
-    barWidth: 3,
-    barRadius: 3,
-    cursorWidth: 1,
-    height: 200,
-    barGap: 3,
-  });
 
-  // Add Spectrogram plugin to Wavesurfer instance
-  wavesurfer.addPlugin(
-    WaveSurfer.spectrogram.create({
-      container: document.querySelector("#inputspectrogram"),
-      fftSamples: 256, // Number of samples for the Fast Fourier Transform (FFT)
-      labels: true, // Show frequency labels on the spectrogram
-      responsive: true, // Make the spectrogram responsive to container size changes
-    })
-  );
+ let inputWaveSurfer, outputWaveSurfer;
 
-  document.getElementById("formFile").addEventListener("change", (event) => {
-    var file = event.target.files[0];
-    var fileURL = URL.createObjectURL(file);
-    wavesurfer.load(fileURL);
-  });
-});
+ inputWaveSurfer = WaveSurfer.create({
+   container: inputWave,
+   waveColor: "#D9DCFF",
+   progressColor: "#4353FF",
+   cursorColor: "#4353FF",
+   barWidth: 3,
+   barRadius: 3,
+   cursorWidth: 1,
+   height: 200,
+   barGap: 3,
+   plugins: [
+     WaveSurfer.spectrogram.create({
+       wavesurfer: inputWaveSurfer,
+       container: document.querySelector("#inputspectrogram"),
+       labels: true,
+       height: 256,
+     }),
+   ],
+ });
 
-  document.getElementById("playButton").addEventListener("click", () => {
-    wavesurfer.play();
-  });
-  document.getElementById("pauseButton").addEventListener("click", () => {
-    wavesurfer.pause();
-  });
+ outputWaveSurfer = WaveSurfer.create({
+   container: outputWave,
+   waveColor: "#D9DCFF",
+   progressColor: "#4353FF",
+   cursorColor: "#4353FF",
+   barWidth: 3,
+   barRadius: 3,
+   cursorWidth: 1,
+   height: 200,
+   barGap: 3,
+   plugins: [
+     WaveSurfer.spectrogram.create({
+       wavesurfer: outputWaveSurfer,
+       container: document.querySelector("#outputspectrogram"),
+       labels: true,
+       height: 256,
+     }),
+   ],
+ });
+
+ document.getElementById("formFile").addEventListener("change", (event) => {
+   var file = event.target.files[0];
+   var fileURL = URL.createObjectURL(file);
+   inputWaveSurfer.load(fileURL);
+ });
+
+ document.getElementById("playButton").addEventListener("click", () => {
+   inputWaveSurfer.play();
+ });
+
+ document.getElementById("pauseButton").addEventListener("click", () => {
+   inputwavesurfer.pause();
+ });
+

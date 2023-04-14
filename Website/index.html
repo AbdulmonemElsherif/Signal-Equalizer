@@ -181,7 +181,7 @@
                             <h5 class="mb-0">Input Signal Viewer</h5>
                         </div>
                         <div class="card-body">
-                            <div id="waveform"></div>
+                            <div id="inputwave"></div>
                             <button id="playButton">Play</button>
                             <button id="pauseButton">Pause</button>
                             <!-- <canvas id="input-signal-canvas"></canvas>
@@ -195,8 +195,11 @@
                                 <h5 >Output Signal Viewer</h5>
                             </div>
                             <div class="card-body">
-                                <canvas id="output-signal-canvas"></canvas>
-                            <audio controls class="w-100"><source src="horse.ogg" type="audio/ogg"></audio>
+                                <!-- <canvas id="output-signal-canvas"></canvas> -->
+                                <div id="outputwave"></div>
+                                <button id="playButton">Play</button>
+                                <button id="pauseButton">Pause</button>
+                            <!-- <audio controls class="w-100"><source src="horse.ogg" type="audio/ogg"></audio> -->
                                 </div>
                             </div>
                         </div>
@@ -219,7 +222,8 @@
                             <h5>Output Spectrogram</h5>
                         </div>
                         <div class="card-body">
-                            <canvas id="output-spectrogram-canvas"></canvas>
+                            <div id="outputspectrogram"></div>
+                            <!-- <canvas id="output-spectrogram-canvas"></canvas> -->
                         </div>
                     </div>
                 </div>
