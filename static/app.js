@@ -94,8 +94,34 @@ document.getElementById("formFile").addEventListener("change", async (event) => 
   }
   Plotly.addTraces(inputSignal, { x: time, y: audioData }, 0);
   Plotly.addTraces(outputSignal, { x: time, y: audioData }, 0);
-  track.connect(audioContext.destination);
+  Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
+  Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
 });
+
+document.querySelectorAll(".audiofile").forEach((audio, index) => {
+  audio.addEventListener("timeupdate", (event) => {
+    const currentTime = event.target.currentTime;
+    updateCursor(currentTime, index);
+  });
+});
+// Add an event listener to the audio element to update the cursor position during playback
+function updateCursor(currentTime, index) {
+  if (index === 0)
+    Plotly.update(
+      inputSignal,
+      { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
+      {},
+      [1]
+    );
+  else
+    Plotly.update(
+      inputSignal,
+      { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
+      {},
+      [1]
+    );
+}
+
 
 document.querySelectorAll(".stopbutton").forEach((button,index) => {
   button.addEventListener("click", () => {
