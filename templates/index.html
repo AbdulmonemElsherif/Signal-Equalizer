@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Signal Equalizer</title>
     <!-- CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@12.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">   
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@12.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
     <!-- <script src="wavesurfer.min.js"></script> -->
@@ -53,53 +53,53 @@
                         <div hidden>
                             <div class="slider-group" id="uniform-range-sliders">
                                 <div class="form-group">
-                                    <label for="slider1">0-2kHz</label>
-                                    <input type="range" class="form-control-range"  id="slider1" min="0" max="2000" value="0">
+                                    <label for="slider1">20-2kHz</label>
+                                    <input type="range" class="form-control-range uniformmode"  id="slider1" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider2">2-4kHz</label>
-                                    <input type="range" class="form-control-range" id="slider2" min="2000" max="4000" value="2000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider2" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider3">4-6kHz</label>
-                                    <input type="range" class="form-control-range" id="slider3" min="4000" max="6000" value="4000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider3" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider4">6-8kHz</label>
-                                    <input type="range" class="form-control-range" id="slider4" min="6000" max="8000" value="6000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider4" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider5">8-10kHz</label>
-                                    <input type="range" class="form-control-range" id="slider5" min="8000" max="10000" value="8000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider5" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider6">10-12kHz</label>
-                                    <input type="range" class="form-control-range" id="slider6" min="10000" max="12000" value="10000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider6" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider7">12-14kHz</label>
-                                    <input type="range" class="form-control-range" id="slider7" min="12000" max="14000" value="12000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider7" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider8">14-16kHz</label>
-                                    <input type="range" class="form-control-range" id="slider8" min="14000" max="16000" value="14000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider8" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider9">16-18kHz</label>
-                                    <input type="range" class="form-control-range" id="slider9" min="16000" max="18000" value="16000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider9" min="-12" max="12" value="0">
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="slider10">18-20kHz</label>
-                                    <input type="range" class="form-control-range" id="slider10" min="18000" max="20000" value="18000">
+                                    <input type="range" class="form-control-range uniformmode" id="slider10" min="-12" max="12" value="0">
                                 </div>
                             </div>
                             <div class="slider-group" id="vowels-sliders">
@@ -190,7 +190,7 @@
                                 <input type="range" id="input-signal-speed" class="playbackRateSlider" min="0.25" max="2" step="0.25" value="1">
                             </div> -->
                             
-                            <audio controls style="width: 90%;" id="inputaudio" src=""></audio>
+                            <audio controls style="width: 90%;" accept="audio/*" id="inputaudio" src="" class="audiofile"></audio>
                             <button class="stopbutton btn btn-secondary" style="position: relative; top:-1.5rem ;"><i class="fas fa-stop"></i></button>
                             </div>
                         </div>
@@ -208,7 +208,7 @@
                                     <button class="stopbutton btn btn-primary"><i class="fas fa-stop"></i></button>
                                     <input type="range" id="input-signal-speed" class="playbackRateSlider" min="0.25" max="2" step="0.25" value="1">
                                 </div> -->
-                            <audio controls id="outputaudio" style="width: 90%;" src=""></audio>
+                            <audio controls id="outputaudio" accept="audio/*" style="width: 90%;" src="" class="audiofile"></audio>
                             <button class="stopbutton btn btn-secondary" style="position: relative; top:-1.5rem ;"><i class="fas fa-stop"></i></button>
                                 </div>
                             </div>
