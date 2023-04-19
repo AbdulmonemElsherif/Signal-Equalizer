@@ -82,7 +82,6 @@ function createPlot(graphElement) {
 }
 
 document.getElementById("formFile").addEventListener("change", async (event) => {
-  console.log(inputSignal);
   file = event.target.files[0];
   let fileURL = URL.createObjectURL(file);
   inputAudio.src = fileURL;
@@ -111,56 +110,35 @@ document.getElementById("formFile").addEventListener("change", async (event) => 
   // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
 });
 
+function getSliderValues(){
+  let sliderValues = [];
+  document.querySelectorAll(".uniformmode").forEach((slider)=>{
+    sliderValues.push(slider.value)
+  });
+  return sliderValues;
+}
+
 document.querySelectorAll(".uniformmode").forEach((slider,index)=>{
   slider.addEventListener('change',()=>{
-    // let minRange=0;
-    // let maxRange=0;
-    // switch (index) {
-    //   case 0:
-    //     (minRange = 20), (maxRange = 2000);
-    //     break;
-    //   case 1:
-    //     (minRange = 2000), (maxRange = 4000);
-    //     break;
-    //   case 2:
-    //     (minRange = 4000), (maxRange = 6000);
-    //     break;
-    //   case 3:
-    //     (minRange = 6000), (maxRange = 8000);
-    //     break;
-    //   case 4:
-    //     (minRange = 8000), (maxRange = 10000);
-    //     break;
-    //   case 5:
-    //     (minRange = 10000), (maxRange = 12000);
-    //     break;
-    //   case 6:
-    //     (minRange = 12000), (maxRange = 14000);
-    //     break;
-    //   case 7:
-    //     (minRange = 14000), (maxRange = 16000);
-    //     break;
-    //   case 8:
-    //     (minRange = 16000), (maxRange = 18000);
-    //     break;
-    //   case 9:
-    //     (minRange = 18000), (maxRange = 20000);
-    //     break;
-    //   default:
-    //     break;
-    // }
-    let data={time:outputSignal.data[0].x, amplitude: outputSignal.data[0].y, sampleRate: sampleRate,sliderNum: index,sliderValue:slider.value}
+    sliderValues = getSliderValues();
+    console.log(slider.nodeValue);
+    // let data = {
+    //   time: inputputSignal.data[0].x,
+    //   amplitude: inputSignal.data[0].y,
+    //   sampleRate: sampleRate,
+    //   sliderValues: getSliderValues,
+    // };
+    var formData = new FormData();
+    formData.append("audioFile", file);
+    formData.append("sliderValues", JSON.stringify(sliderValues));
     fetch("uniformAudioProcessing", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: formData,
     })
-    .then((response) => response.json())
-    .then((result)=>{
-      console.log(result);
-    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+      });
   })
 });
 

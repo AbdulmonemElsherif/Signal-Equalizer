@@ -2,9 +2,25 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 import numpy as np
 from scipy.fft import fft
 import librosa
+import json
 frequencyBands=[[20,2000],[2000,4000],[4000,6000],[6000,8000],[8000,10000],[10000,12000],[12000,14000],[14000,16000],[16000,18000],[18000,20000]]
 audioData=[]
+sr=0
 app = Flask(__name__)
+
+def perform_fft(audioData, sr):
+    audioData_np = np.array(audioData)
+    signal_fft_freq = np.fft.fft(audioData_np) 
+    magnitude = np.abs(signal_fft_freq)
+    phase = np.angle(signal_fft_freq)
+    # An array of frequencies corresponding to the Fourier Transform output
+    # d=1/sampleRate: This specifies the spacing between the frequency values in the output array. In this case, it is set to 1/sampleRate
+    frequency = np.fft.fftfreq(len(audioData_np), d=1/sr) 
+    return {'magnitude': magnitude, 'phase': phase, 'frequency': frequency }
+
+def perform_ifft(fft):
+    modified_signal = np.fft.ifft(fft)
+    return modified_signal
 
 @app.route('/')
 def index():
@@ -16,45 +32,24 @@ def uploadAudio():
     audioData, sr = librosa.load(audioFile, sr=None)
     return {'audioData':audioData.tolist(),'sampleRate':sr}
 
-
-
-def perform_fft():
-    # data = request.json
-    time = np.array(data['time'])  # Convert to numpy array
-    # #print(time)
-    signal = np.array(data['signal'])  # Convert to numpy array
-    # #print(signal)
-    sample_rate = data['sampleRate']
-    # #print(sample_rate)
-    signal_fft_freq = np.fft.fft(signal) 
-    magnitude = np.abs(signal_fft_freq)
-    phase = np.angle(signal_fft_freq)
-    return {'magnitude': magnitude, 'phase': phase, 'frequency': signal_freq}
-
-def perform_ifft():
-    modified_signal = np.fft.ifft(fft)
-
+@app.route('/audioProcessing',methods=['POST','GET'])
 def rangeEqualizer():
-    idicesArr = np.where((signal_fft_freq >= frequencyBands[index][0]) & (signal_fft_freq <= frequencyBands[index][1]))
-    gainValue=sliderValue
-    for indexValue in idicesArr:
-        magnitude[indexValue] *= gainValue
+    audio_data = uploadAudio()
+    fft_data = perform_fft(audio_data['audioData'], audio_data['sampleRate'])
+    signal_fft_freq = fft_data['frequency']
+    magnitude = fft_data['magnitude']
+    phase = fft_data['phase']
+    gainValues = request.form['sliderValues']
+    gainValuesNp = np.array(json.loads(gainValues))
+    for band in frequencyBands:
+        indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+        for i in indices:
+            # Apply the gain to the corresponding frequency components
+            magnitude[indices] *= gainValuesNp[i]
+            #phase[indices] *= gain_product
+    modified_signal = perform_ifft(magnitude * np.exp(1j * phase))
+    return {'reconstructedAudio':modified_signal.tolist()}
 
-
-@app.route('/uniformAudioProcessing',methods=['POST','GET'])
-    # # Get the bytes data from the request
-    # audioData = request.files['audioData'].read() 
-    # print(audioData);
-    # # Get the sampling rate from the request
-    # sampleRate = int(request.form['sampleRate']) 
-
-    # # Convert audio data to numpy array 
-    # audio_np = np.frombuffer(audioData, dtype=np.float32)
-    # print(audio_np)
-    # # Perform FFT on audio data
-    # fft_result = np.fft.fft(audio_np)
-    # magnitude = np.abs(fft_result)
-    # phase = np.angle(fft_result)
     
     # # An array of frequencies corresponding to the Fourier Transform output
     # # The length of the output array will be equal to the length of the input signal
