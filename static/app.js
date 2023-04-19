@@ -49,6 +49,8 @@ function updateSliders() {
       sliders = document.createElement("div");
       break;
   }
+    sliders.querySelectorAll('input[type="range"]').forEach((slider) => {
+    slider.addEventListener("change", handleSliderChange);});
   // Add new sliders to equalizer container
   equalizerContainer.appendChild(sliders);
 }
@@ -115,32 +117,27 @@ function getSliderValues(){
   document.querySelectorAll(".uniformmode").forEach((slider)=>{
     sliderValues.push(slider.value)
   });
-  return sliderValues;
+  return sliderValues.slice(9,sliderValues.length-1);
 }
 
-document.querySelectorAll(".uniformmode").forEach((slider,index)=>{
-  slider.addEventListener('change',()=>{
-    sliderValues = getSliderValues();
-    console.log(slider.nodeValue);
-    // let data = {
-    //   time: inputputSignal.data[0].x,
-    //   amplitude: inputSignal.data[0].y,
-    //   sampleRate: sampleRate,
-    //   sliderValues: getSliderValues,
-    // };
-    var formData = new FormData();
-    formData.append("audioFile", file);
-    formData.append("sliderValues", JSON.stringify(sliderValues));
-    fetch("uniformAudioProcessing", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-      });
+function handleSliderChange() {
+  sliderValues = getSliderValues();
+  console.log(sliderValues);
+  var formData = new FormData();
+  formData.append("audioFile", file);
+  formData.append("sliderValues", JSON.stringify(sliderValues));
+  fetch("uniformAudioProcessing", {
+    method: "POST",
+    body: formData,
   })
-});
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+    });
+  // Perform necessary actions based on slider value
+}
+
+
 
 document.querySelectorAll(".audiofile").forEach((audio, index) => {
   audio.addEventListener("timeupdate", (event) => {
