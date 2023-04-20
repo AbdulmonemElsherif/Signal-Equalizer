@@ -21,24 +21,24 @@
 
 </head>
 
-<body class="bg-dark">
+<body class="bg-light">
     <div class="flex-column w-100 px-3">
         <!-- <header> -->
-        <div class="bg-dark d-flex justify-content-between">
-            <h3 class=" text-info p-3 ">Signal Equalizer</h3>
+        <div class="bg-light d-flex justify-content-between">
+            <h3 class="p-3" style="color: #3182ce;">Signal Equalizer</h3>
             <div class="form-check m-4">
                 <input type="checkbox" class="form-check-input" id="spectrogram-toggle">
-                <label class="form-check-label text-info" for="spectrogram-toggle">Show Spectrograms</label>
+                <label class="form-check-label " style="color:#3182ce;" for="spectrogram-toggle">Show Spectrograms</label>
             </div>
         </div>
         <!-- </header> -->
         <div class="row">
             <div class="col-md-6">
-                <div class="card mb-3 bg-dark border-info">
-                    <div class="card-header bg-dark text-info border-info">
+                <div class="card mb-3 bg-light " style="border: 2px solid #3182ce">
+                    <div class="card-header bg-light " style="color:#3182ce; border-bottom: 2px solid #3182ce">
                         <h5 class="mb-0">Input Signal Viewer</h5>
                     </div>
-                    <div class="card-body bg-dark">
+                    <div class="card-body bg-light">
                         <div id="inputwave" style="width:100%; height:350px;"></div>
                         <!-- <div class="inputcontrols">
                             <button class="playbutton btn btn-info"><i class="fas fa-play"></i></button>
@@ -48,18 +48,18 @@
                         </div> -->
                         <div class="audio-container mt-3">
                             <audio controls style="width: 90%;" id="inputaudio" src=""></audio>
-                            <button class="stopbutton btn btn-info" style="position: relative; top:-1.5rem ;"><i
+                            <button class="stopbutton btn" style="position: relative; top:-1.5rem ; background-color: #3182ce;"><i
                                     class="fas fa-stop"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card mb-3 bg-dark border-info">
-                    <div class="card-header bg-dark text-info border-info">
+                <div class="card mb-3 bg-light " style="border: 2px solid #3182ce">
+                    <div class="card-header bg-light " style="color:#3182ce; border-bottom: 2px solid #3182ce">
                         <h5 class="mb-0">Output Signal Viewer</h5>
                     </div>
-                    <div class="card-body bg-dark">
+                    <div class="card-body bg-light">
                         <div id="outputwave" style="width:100%; height:350px;"></div>
                         <!-- <div class="outputcontrols">
                                 <button class="playbutton btn btn-info"><i class="fas fa-play"></i></button>
@@ -69,7 +69,7 @@
                             </div> -->
                         <div class="audio-container mt-3">
                             <audio controls style="width: 90%;" id="inputaudio" src=""></audio>
-                            <button class="stopbutton btn btn-info" style="position: relative; top:-1.5rem ;"><i
+                            <button class="stopbutton btn" style="position: relative; top:-1.5rem ; background-color: #3182ce;"><i
                                     class="fas fa-stop"></i></button>
                         </div>
                     </div>
@@ -78,22 +78,22 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <div class="card mb-3 spectrogram border-info" style="display: none;">
-                    <div class="card-header bg-dark text-info border-info">
+                <div class="card mb-3 spectrogram " style="border: 2px solid #3182ce" style="display: none;">
+                    <div class="card-header bg-light " style="color:#3182ce; border-bottom: 2px solid #3182ce">
                         <h5>Input Spectrogram</h5>
                     </div>
-                    <div class="card-body bg-dark text-info border-info">
+                    <div class="card-body bg-light " style="color:#3182ce;">
                         <div id="inputspectrogram"></div>
                         <!-- <canvas id="input-spectrogram-canvas"></canvas> -->
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card mb-3 spectrogram border-info" style="display: none;">
-                    <div class="card-header bg-dark text-info border-info">
+                <div class="card mb-3 spectrogram " style="border: 2px solid #3182ce" style="display: none;">
+                    <div class="card-header bg-light " style="color:#3182ce; border-bottom: 2px solid #3182ce">
                         <h5>Output Spectrogram</h5>
                     </div>
-                    <div class="card-body bg-dark text-info border-info">
+                    <div class="card-body bg-light " style="color:#3182ce;">
                         <div id="outputspectrogram"></div>
                         <!-- <canvas id="output-spectrogram-canvas"></canvas> -->
                     </div>
@@ -104,10 +104,10 @@
     <div class="ms-3 me-3">
         <div class="flex p-3">
             <div class="mb-3">
-                <input class="form-control bg-dark text-info border-info" type="file" id="formFile">
+                <input class="form-control bg-light " style="color:#3182ce; border: 2px solid #3182ce" type="file" id="formFile">
             </div>
             <div class="equalizer-mode">
-                <select id="mode-select" class="form-select form-select bg-dark text-info border-info">
+                <select id="mode-select" class="form-select form-select bg-light " style="color:#3182ce; border: 2px solid #3182ce">
                     <option value="select-mode" selected disabled>Modes</option>
                     <option value="uniform-range">Uniform Range Mode</option>
                     <option value="vowels">Vowels Mode</option>
@@ -121,7 +121,7 @@
 
             <br>
             <!-- <div class="row"> -->
-            <div class="text-info">
+            <div class="" style="color:#3182ce;">
                 <div id="equalizer-container" class="mt-3">
                     <div hidden>
                         <div class="slider-group" id="uniform-range-sliders">

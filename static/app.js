@@ -63,11 +63,11 @@ function createPlot(graphElement) {
         text:"Time (sec)",
         font: {
           size: 18,
-          color: 'rgb(13,202,240)'
+          color: '#3182ce'
         }
       },
       tickfont: {
-        color: 'rgb(13,202,240)'
+        color: '#3182ce'
       },
       zoom: 1000,
      
@@ -77,15 +77,15 @@ function createPlot(graphElement) {
         text:"Amplitude",
         font: {
           size: 18,
-          color: 'rgb(13,202,240)'
+          color: '#3182ce'
         }
       },
       tickfont: {
-        color: 'rgb(13,202,240)'
+        color: '#3182ce'
       } 
     },
-    paper_bgcolor: 'rgb(33,37,41)',
-  plot_bgcolor: 'rgb(33,37,41)'
+  //   paper_bgcolor: 'rgb(33,37,41)',
+  // plot_bgcolor: 'rgb(33,37,41)'
   };
   Plotly.newPlot(graphElement, [], layout, {
     displaylogo: false,
