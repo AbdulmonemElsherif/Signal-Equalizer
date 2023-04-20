@@ -59,12 +59,33 @@ window.addEventListener("load", function () {
 function createPlot(graphElement) {
   let layout = {
     xaxis: {
-      title: "Time (sec)",
+      title: {
+        text:"Time (sec)",
+        font: {
+          size: 18,
+          color: 'rgb(13,202,240)'
+        }
+      },
+      tickfont: {
+        color: 'rgb(13,202,240)'
+      },
       zoom: 1000,
+     
     },
     yaxis: {
-      title: "Amplitude",
+      title: {
+        text:"Amplitude",
+        font: {
+          size: 18,
+          color: 'rgb(13,202,240)'
+        }
+      },
+      tickfont: {
+        color: 'rgb(13,202,240)'
+      } 
     },
+    paper_bgcolor: 'rgb(33,37,41)',
+  plot_bgcolor: 'rgb(33,37,41)'
   };
   Plotly.newPlot(graphElement, [], layout, {
     displaylogo: false,
