@@ -1,0 +1,77 @@
+input[type=file]::file-selector-button {
+    background: #3182ce;
+    color: #212529;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid #3182ce;
+    background-color: #ffffff;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #3182ce;
+    border: 2px solid #3182ce;
+}
+
+.equalizer {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  label {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  
+  .slider {
+   -webkit-appearance: none;
+   appearance: none;
+    writing-mode: bt-lr; /* rotate the slider vertically for other browsers */
+    transform: rotate(-90deg); /* adjust the orientation of the slider */
+    width: 100px;
+    height: 20px; /* set the width and height of the slider */
+    background: #3e4041;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border: 2px solid #3182ce;
+  }
+  
+  .slider:hover {
+    opacity: 1;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #3182ce;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #3182ce;
+    cursor: pointer;
+  }
+  audio::-webkit-media-controls-panel {
+    background-color: #3182ce;
+    color: #212529;
+  }
+  
+  audio::-webkit-media-controls-play-button,
+  audio::-webkit-media-controls-pause-button {
+    color: #212529;
+  }
+  
+  audio::-webkit-media-controls-current-time-display,
+  audio::-webkit-media-controls-time-remaining-display {
+    color: #212529;
+    text-shadow: none;
+  }
