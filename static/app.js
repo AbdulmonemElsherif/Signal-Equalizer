@@ -9,60 +9,40 @@ let sliders;
 let sampleRate;
 // Define variable for mode selector
 const equalizerContainer = document.getElementById("equalizer-container");
-const modeSelector = document.getElementById("mode-select");
+const modeSelector = document.getElementById("mode-select");  
 const inputAudio = document.getElementById("inputaudio");
+const outputAudio = document.getElementById("outputaudio");
+
 let file;
 // Define function to update equalizer sliders based on selected mode
-function updateSliders() {
-  // Remove existing sliders
-  if (sliders) {
-    sliders.remove();
-  }
-  // Create new sliders based on selected mode
-  const mode = modeSelector.value;
-  // Hide the sliders if no mode is selected
-  if (mode == "select-mode") {
-    equalizerContainer.style.display = "none";
-  } else {
-    equalizerContainer.style.display = "block";
-  }
-  switch (mode) {
-    case "uniform-range":
-      sliders = document
-        .getElementById("uniform-range-sliders")
-        .cloneNode(true);
-      break;
-    case "vowels":
-      sliders = document.getElementById("vowels-sliders").cloneNode(true);
-      break;
-    case "musical-instruments":
-      sliders = document
-        .getElementById("musical-instruments-sliders")
-        .cloneNode(true);
-      break;
-    case "biological-signal-abnormalities":
-      sliders = document
-        .getElementById("biological-signal-abnormalities-sliders")
-        .cloneNode(true);
-      break;
-    default:
-      sliders = document.createElement("div");
-      break;
-  }
-    sliders.querySelectorAll('input[type="range"]').forEach((slider) => {
-    slider.addEventListener("change", handleSliderChange);});
-  // Add new sliders to equalizer container
-  equalizerContainer.appendChild(sliders);
+
+function updateSliders(selectedIndex) {
+  const sliderGroups = document.querySelectorAll(".slider-group");
+  equalizerContainer.style.display = "block";
+  sliderGroups.forEach((sliderGroup, index) => {
+    if (index === selectedIndex - 1) {
+      sliderGroup.style.display = "block";
+    } else {
+      sliderGroup.style.display = "none";
+    }
+  });
 }
 
+document.querySelectorAll(".slider").forEach((slider)=>{
+  slider.addEventListener("change", handleSliderChange)
+});
+
 // Add event listener to mode selector
-modeSelector.addEventListener("change", updateSliders);
+modeSelector.addEventListener("change", ()=>{
+  const selectedIndex = modeSelector.selectedIndex;
+  updateSliders(selectedIndex);
+});
 
 window.addEventListener("load", function () {
   createPlot(inputSignal);
   createPlot(outputSignal);
   // Call updateSliders function to initialize equalizer sliders
-  updateSliders();
+  // updateSliders();
 });
 function createPlot(graphElement) {
   let layout = {
@@ -112,56 +92,85 @@ document.getElementById("formFile").addEventListener("change", async (event) => 
   // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
 });
 
+function loadUpdatedOutputSignal(file){
+    var formData = new FormData();
+    formData.append("audioFile", file);
+    fetch("/readAudioFile", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        let audioDataArray = result.audioData;
+        let time = [];
+        sampleRate = result.sampleRate;
+        for (let index = 0; index < audioDataArray.length; index++) {
+          //get time from sampling frequency as  fs = 1/T
+          time.push(index / sampleRate);
+        }
+        Plotly.update(outputSignal, { x: [time], y: [audioDataArray] },{},0);
+      });
+}
+
+
 function getSliderValues(){
   let sliderValues = [];
-  document.querySelectorAll(".uniformmode").forEach((slider)=>{
-    sliderValues.push(slider.value)
-  });
-  return sliderValues.slice(9,sliderValues.length-1);
+  selectedModeIndex = document.getElementById("mode-select").selectedIndex;
+  if (selectedModeIndex === 1) {
+    document.querySelectorAll(".uniformmode").forEach((slider) => {
+      sliderValues.push(slider.value);
+    });
+  } else if (selectedModeIndex === 2) {
+    document.querySelectorAll(".vowels").forEach((slider) => {
+      sliderValues.push(slider.value);
+    });
+  }
+  return sliderValues;
 }
 
 function handleSliderChange() {
   sliderValues = getSliderValues();
-  console.log(sliderValues);
   var formData = new FormData();
   formData.append("audioFile", file);
   formData.append("sliderValues", JSON.stringify(sliderValues));
-  fetch("uniformAudioProcessing", {
+  fetch("audioProcessing", {
     method: "POST",
     body: formData,
   })
-    .then((response) => response.json())
+    .then((response) => response.blob())
     .then((result) => {
       console.log(result);
+      outputAudio.src = URL.createObjectURL(result);
+      loadUpdatedOutputSignal(result);
     });
   // Perform necessary actions based on slider value
 }
 
 
 
-document.querySelectorAll(".audiofile").forEach((audio, index) => {
-  audio.addEventListener("timeupdate", (event) => {
-    const currentTime = event.target.currentTime;
-    updateCursor(currentTime, index);
-  });
-});
-// Add an event listener to the audio element to update the cursor position during playback
-function updateCursor(currentTime, index) {
-  if (index === 0)
-    Plotly.update(
-      inputSignal,
-      { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
-      {},
-      [1]
-    );
-  else
-    Plotly.update(
-      inputSignal,
-      { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
-      {},
-      [1]
-    );
-}
+// document.querySelectorAll(".audiofile").forEach((audio, index) => {
+//   audio.addEventListener("timeupdate", (event) => {
+//     const currentTime = event.target.currentTime;
+//     updateCursor(currentTime, index);
+//   });
+// });
+// // Add an event listener to the audio element to update the cursor position during playback
+// function updateCursor(currentTime, index) {
+//   if (index === 0)
+//     Plotly.update(
+//       inputSignal,
+//       { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
+//       {},
+//       [1]
+//     );
+//   else
+//     Plotly.update(
+//       inputSignal,
+//       { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
+//       {},
+//       [1]
+//     );
+// }
 
 document.querySelectorAll(".stopbutton").forEach((button, index) => {
   button.addEventListener("click", () => {
