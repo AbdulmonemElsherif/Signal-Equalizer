@@ -14,19 +14,7 @@ const inputAudio = document.getElementById("inputaudio");
 const outputAudio = document.getElementById("outputaudio");
 
 let file;
-// Define function to update equalizer sliders based on selected mode
 
-function updateSliders(selectedIndex) {
-  const sliderGroups = document.querySelectorAll(".slider-group");
-  equalizerContainer.style.display = "block";
-  sliderGroups.forEach((sliderGroup, index) => {
-    if (index === selectedIndex - 1) {
-      sliderGroup.style.display = "block";
-    } else {
-      sliderGroup.style.display = "none";
-    }
-  });
-}
 
 document.querySelectorAll(".slider").forEach((slider)=>{
   slider.addEventListener("change", handleSliderChange)
@@ -41,9 +29,49 @@ modeSelector.addEventListener("change", ()=>{
 window.addEventListener("load", function () {
   createPlot(inputSignal);
   createPlot(outputSignal);
-  // Call updateSliders function to initialize equalizer sliders
-  // updateSliders();
 });
+
+document
+  .getElementById("formFile")
+  .addEventListener("change", async (event) => {
+    file = event.target.files[0];
+    let fileURL = URL.createObjectURL(file);
+    inputAudio.src = fileURL;
+    outputAudio.src = fileURL;
+    var formData = new FormData();
+    formData.append("audioFile", file);
+    fetch("/readAudioFile", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        let audioDataArray = result.audioData;
+        let time = [];
+        sampleRate = result.sampleRate;
+        for (let index = 0; index < audioDataArray.length; index++) {
+          //get time from sampling frequency as  fs = 1/T
+          time.push(index / sampleRate);
+        }
+        document.querySelectorAll(".slider").forEach((slider) => {
+          slider.value = 0;
+        });
+        if (inputSignal.data.length === 0) {
+          Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
+          Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
+        } else {
+          Plotly.deleteTraces(inputSignal, [0]);
+          Plotly.deleteTraces(outputSignal, [0]);
+          Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
+          Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
+        }
+      });
+    // // Add a vertical line trace for the cursor
+    // // const max = Math.max(audioData);
+    // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
+    // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
+  });
+
 function createPlot(graphElement) {
   let layout = {
     xaxis: {
@@ -63,36 +91,20 @@ function createPlot(graphElement) {
   });
 }
 
-document.getElementById("formFile").addEventListener("change", async (event) => {
-  file = event.target.files[0];
-  let fileURL = URL.createObjectURL(file);
-  inputAudio.src = fileURL;
-  outputAudio.src = fileURL;
-  var formData = new FormData();
-  formData.append("audioFile", file);
-  fetch('/readAudioFile',{
-    method:'POST',
-    body:formData
-  })
-  .then((response)=>response.json())
-  .then((result)=>{
-    let audioDataArray = result.audioData;
-    let time = [];
-    sampleRate = result.sampleRate;
-    for (let index = 0; index < audioDataArray.length; index++) {
-      //get time from sampling frequency as  fs = 1/T
-      time.push(index /sampleRate);
+// Define function to update equalizer sliders based on selected mode
+function updateSliders(selectedIndex) {
+  const sliderGroups = document.querySelectorAll(".slider-group");
+  equalizerContainer.style.display = "block";
+  sliderGroups.forEach((sliderGroup, index) => {
+    if (index === selectedIndex - 1) {
+      sliderGroup.style.display = "block";
+    } else {
+      sliderGroup.style.display = "none";
     }
-    Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
-    Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
-  })
-  // // Add a vertical line trace for the cursor
-  // // const max = Math.max(audioData);
-  // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
-  // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
-});
+  });
+}
 
-function loadUpdatedOutputSignal(file){
+function processUniformAudio(file){
     var formData = new FormData();
     formData.append("audioFile", file);
     fetch("/readAudioFile", {
@@ -111,7 +123,6 @@ function loadUpdatedOutputSignal(file){
         Plotly.update(outputSignal, { x: [time], y: [audioDataArray] },{},0);
       });
 }
-
 
 function getSliderValues(){
   let sliderValues = [];
@@ -141,19 +152,10 @@ function handleSliderChange() {
     .then((result) => {
       console.log(result);
       outputAudio.src = URL.createObjectURL(result);
-      loadUpdatedOutputSignal(result);
+      processUniformAudio(result);
     });
-  // Perform necessary actions based on slider value
 }
 
-
-
-// document.querySelectorAll(".audiofile").forEach((audio, index) => {
-//   audio.addEventListener("timeupdate", (event) => {
-//     const currentTime = event.target.currentTime;
-//     updateCursor(currentTime, index);
-//   });
-// });
 // // Add an event listener to the audio element to update the cursor position during playback
 // function updateCursor(currentTime, index) {
 //   if (index === 0)
@@ -185,14 +187,21 @@ document.querySelectorAll(".stopbutton").forEach((button, index) => {
 });
 
 document.querySelector("#spectrogram-toggle").addEventListener("change", (event) => {
-    document.querySelectorAll(".spectrogram").forEach((spectrogram) => {
-      if (event.target.checked) {
-        spectrogram.style.display = "block";
-      } else {
-        spectrogram.style.display = "none";
-      }
-    });
+  document.querySelectorAll(".spectrogram").forEach((spectrogram) => {
+    if (event.target.checked) {
+      spectrogram.style.display = "block";
+    } else {
+      spectrogram.style.display = "none";
+    }
+  });
 });
+
+// document.querySelectorAll(".audiofile").forEach((audio, index) => {
+//   audio.addEventListener("timeupdate", (event) => {
+//     const currentTime = event.target.currentTime;
+//     updateCursor(currentTime, index);
+//   });
+// });
 
 //   //apply changes from first graph onto the second graph in case of zooming and panning
 //   inputSignal.on("plotly_relayout", () => {
@@ -202,6 +211,7 @@ document.querySelector("#spectrogram-toggle").addEventListener("change", (event)
 //   outputSignal.on("plotly_relayout", () => {
 //     linking(outputSignal, inputSignal);
 //   });
+
 //   //linking function
 // function linking(firstGraph, secondGraph) {
 //     var xaxis = firstGraph.layout.xaxis;
