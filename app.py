@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request,Response,jsonify,send_file
 from audioProcessing import AudioProcessor
+
 app = Flask(__name__)
 audio_processor = AudioProcessor()
 
@@ -15,9 +16,17 @@ def readAudio():
 
 @app.route('/audioProcessing',methods=['POST'])
 def rangeEqualizer():
-    # audioFile = request.files['audioFile']
     sliderValues = request.form['sliderValues']
     return audio_processor.process_uniform_audio(sliderValues)
+
+@app.route('/inputSpectrogram',methods=['GET'])
+def inputspectrogram():
+    return audio_processor.input_spectrogram()
+
+@app.route('/outputSpectrogram',methods=['POST'])
+def outputspectrogram():
+    outputFile = request.files['outputFile']
+    return audio_processor.output_spectrogram(outputFile)
 
 if __name__ == "__main__":
     app.run(debug=True)

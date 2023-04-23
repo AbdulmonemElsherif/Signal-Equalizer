@@ -2,9 +2,13 @@ from flask import Flask, render_template, redirect, url_for, request, Response, 
 import numpy as np
 from scipy.fft import fft
 import librosa
+import librosa.display
 import json
-import soundfile as sf
+import base64
 import io
+import soundfile as sf
+import matplotlib.pyplot as plt
+
 
 class AudioProcessor:
     def __init__(self):
@@ -52,3 +56,29 @@ class AudioProcessor:
         wav_file.seek(0)
         return send_file(wav_file, mimetype='audio/wav')
 
+    def plot_spectrogram(self,audio_data,sample_rate):
+        # Generate the spectrogram
+        hop_length = 512
+        n_fft = 2048
+        spectrogram = librosa.feature.melspectrogram(y=audio_data, sr=sample_rate, n_fft=n_fft, hop_length=hop_length)
+        # Convert the spectrogram to decibels
+        spectrogram = librosa.power_to_db(spectrogram, ref=np.max)
+        # Plot the spectrogram
+        plt.figure(figsize=(10, 4))
+        librosa.display.specshow(spectrogram, y_axis='mel', fmax=8000, x_axis='time')
+        plt.colorbar(format='%+2.0f dB')
+        plt.tight_layout()
+        # Save the plot as an image
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        data = base64.b64encode(buf.read()).decode('ascii')
+        # Return the image data as JSON
+        return jsonify({'image': data})
+
+    def input_spectrogram(self):
+        return self.plot_spectrogram(self.audio_data,self.sample_rate)
+
+    def output_spectrogram(self,audio_file):
+        audio_data, sr = librosa.load(audio_file, sr=None)
+        return self.plot_spectrogram(audio_data,sr)

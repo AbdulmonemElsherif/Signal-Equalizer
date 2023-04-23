@@ -13,8 +13,9 @@
         crossorigin="anonymous"></script>
     <!-- <script src="wavesurfer.min.js"></script> -->
     <script src="https://kit.fontawesome.com/2c36e9b7b1.js" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/wavesurfer.js"></script>
-    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js"></script>
+    <!-- <script src="https://unpkg.com/wavesurfer.js"></script> -->
+    <!-- <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js"></script> -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/plotly-2.18.2.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="/static/style.css">
 
@@ -181,8 +182,8 @@
                         <div class="card-header">
                             <h5 class="mb-0">Input Signal Viewer</h5>
                         </div>
-                        <div class="card-body">
-                            <div id="inputwave" style="width:100%; height:350px;"></div>
+                        <div class="card-body mb-0">
+                            <div id="inputwave" style="width:100%; height:250px;"></div>
                             <!-- <div class="inputcontrols">
                                 <button class="playbutton btn btn-primary"><i class="fas fa-play"></i></button>
                                 <button class="pausebutton btn btn-primary"><i class="fas fa-pause"></i></button>
@@ -201,7 +202,7 @@
                                 <h5 class="mb-0">Output Signal Viewer</h5>
                             </div>
                             <div class="card-body">
-                                <div id="outputwave" style="width:100%; height:350px;"></div>
+                                <div id="outputwave" style="width:100%; height:250px;"></div>
                                 <!-- <div class="outputcontrols">
                                     <button class="playbutton btn btn-primary"><i class="fas fa-play"></i></button>
                                     <button class="pausebutton btn btn-primary"><i class="fas fa-pause"></i></button>
@@ -221,7 +222,7 @@
                             <h5>Input Spectrogram</h5>
                         </div>
                         <div class="card-body" >
-                            <div id="inputspectrogram"></div>
+                            <img id="inputspectrogram" class="spectrogram" width="100%">
                             <!-- <canvas id="input-spectrogram-canvas"></canvas> -->
                         </div>
                     </div>
@@ -232,7 +233,7 @@
                             <h5>Output Spectrogram</h5>
                         </div>
                         <div class="card-body" >
-                            <div id="outputspectrogram"></div>
+                            <img id="outputspectrogram" class="spectrogram" width="100%">
                             <!-- <canvas id="output-spectrogram-canvas"></canvas> -->
                         </div>
                     </div>
