@@ -104,6 +104,8 @@
         <div class="flex p-3">
             <div class="mb-3">
                 <input class="form-control bg-light " style="color:#3182ce; border: 2px solid #3182ce" type="file" id="formFile">
+
+                <!-- <input class="form-control bg-light " style="color:#3182ce; border: 2px solid #3182ce" type="file" id="ECG"> -->
             </div>
             <div class="equalizer-mode">
                 <select id="mode-select" class="form-select form-select bg-light " style="color:#3182ce; border: 2px solid #3182ce">
@@ -185,29 +187,14 @@
                         </div>
                         <div class="slider-group" id="biological-signal-abnormalities-sliders">
                             <div class="form-group">
-                                <label for="slider-heartbeat">Slider Heartbeat</label>
-                                <input type="range" class="form-control-range" id="slider-heartbeat" min="0" max="100"
+                                 <label for="slider-heartbeat">Arrythmia I</label>
+                                 <input type="range" class="form-control-range" id="slider-heartbeat" min="0" max="100"
                                     value="50">
                             </div>
                             <div class="form-group">
-                                <label for="slider-brain-waves">Slider Brain Waves</label>
-                                <input type="range" class="form-control-range" id="slider-brain-waves" min="0" max="100"
+                                 <label for="slider-brain-waves">Arrythmia II</label>
+                                 <input type="range" class="form-control-range" id="slider-brain-waves" min="0" max="100"
                                     value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-muscle-tension">Slider Muscle Tension</label>
-                                <input type="range" class="form-control-range" id="slider-muscle-tension" min="0"
-                                    max="100" value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-respiration">Slider Respiration</label>
-                                <input type="range" class="form-control-range" id="slider-respiration" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-blood-pressure">Slider Blood Pressure</label>
-                                <input type="range" class="form-control-range" id="slider-blood-pressure" min="0"
-                                    max="100" value="50">
                             </div>
                         </div>
                     </div>
