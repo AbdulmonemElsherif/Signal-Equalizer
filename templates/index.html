@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,15 +21,21 @@
 
 </head>
 
-<body class="bg-light">
+<body>
     <div class="flex-column w-100 px-3">
         <!-- <header> -->
-        <div class="bg-light d-flex justify-content-between">
-            <h3 class="p-3" style="color: #3182ce;">Signal Equalizer</h3>
+        <div class="d-flex justify-content-between" style="background-color: #90cdf4;">
+            <h3 class="p-3" style="color: white;">Signal Equalizer</h3>
+            <div class="d-flex justify-content-end">
+            <div class="m-3">
+                <input class="form-control bg-light " style="color:#3182ce; border: 2px solid #3182ce" type="file"
+                    id="formFile">
+            </div>
             <div class="form-check m-4">
                 <input type="checkbox" class="form-check-input" id="spectrogram-toggle">
-                <label class="form-check-label " style="color:#3182ce;" for="spectrogram-toggle">Show Spectrograms</label>
+                <label class="form-check-label " style="color:white;" for="spectrogram-toggle">Show Spectrograms</label>
             </div>
+        </div>
         </div>
         <!-- </header> -->
         <div class="row">
@@ -47,7 +54,8 @@
                         </div> -->
                         <div class="audio-container mt-3">
                             <audio controls style="width: 90%;" id="inputaudio" src=""></audio>
-                            <button class="stopbutton btn" style="position: relative; top:-1.5rem ; background-color: #3182ce;"><i
+                            <button class="stopbutton btn"
+                                style="position: relative; top:-1.5rem ; background-color: #3182ce;"><i
                                     class="fas fa-stop"></i></button>
                         </div>
                     </div>
@@ -68,7 +76,8 @@
                             </div> -->
                         <div class="audio-container mt-3">
                             <audio controls style="width: 90%;" id="inputaudio" src=""></audio>
-                            <button class="stopbutton btn" style="position: relative; top:-1.5rem ; background-color: #3182ce;"><i
+                            <button class="stopbutton btn"
+                                style="position: relative; top:-1.5rem ; background-color: #3182ce;"><i
                                     class="fas fa-stop"></i></button>
                         </div>
                     </div>
@@ -102,109 +111,105 @@
     </div>
     <div class="ms-3 me-3">
         <div class="flex p-3">
-            <div class="mb-3">
-                <input class="form-control bg-light " style="color:#3182ce; border: 2px solid #3182ce" type="file" id="formFile">
-
-                <!-- <input class="form-control bg-light " style="color:#3182ce; border: 2px solid #3182ce" type="file" id="ECG"> -->
-            </div>
-            <div class="equalizer-mode">
-                <select id="mode-select" class="form-select form-select bg-light " style="color:#3182ce; border: 2px solid #3182ce">
-                    <option value="select-mode" selected disabled>Modes</option>
-                    <option value="uniform-range">Uniform Range Mode</option>
-                    <option value="vowels">Vowels Mode</option>
-                    <option value="musical-instruments">Musical Instruments Mode</option>
-                    <option value="biological-signal-abnormalities">Biological Signal Abnormalities
-                    </option>
-                </select>
-            </div>
-            <br>
+            <div class="col-md-12">
+                <div class="equalizer-mode">
+                    <select id="mode-select" class="form-select form-select bg-light "
+                        style="color:#3182ce; border: 2px solid #3182ce">
+                        <option value="select-mode" selected disabled>Modes</option>
+                        <option value="uniform-range">Uniform Range Mode</option>
+                        <option value="vowels">Vowels Mode</option>
+                        <option value="musical-instruments">Musical Instruments Mode</option>
+                        <option value="biological-signal-abnormalities">Biological Signal Abnormalities
+                        </option>
+                    </select>
+                </div>
+                <br>
 
 
-            <br>
-            <!-- <div class="row"> -->
-            <div class="" style="color:#3182ce;">
-                <div id="equalizer-container" class="mt-3">
-                    <div hidden>
-                        <div class="slider-group" id="uniform-range-sliders">
-                   
-                           
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider1">
-                       
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider2">
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider3">
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider4">
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider5">
-                     
-                     
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider6">
+                <br>
+                <!-- <div class="row"> -->
+                <div class="" style="color:white;">
+                    <div id="equalizer-container" class="mt-3">
+                        <div hidden>
+                            <div class="slider-group" id="uniform-range-sliders">
 
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider7">
 
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider8">
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider1">
 
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider9">
-                            <input type="range" min="1" max="100" value="50" class="slider" id="slider10">
-                        </div>
-                   
-                        <div class="slider-group" id="vowels-sliders">
-                            <div class="form-group">
-                                <label for="slider-a">Slider A</label>
-                                <input type="range" class="form-control-range" id="slider-a" min="0" max="100"
-                                    value="50">
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider2">
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider3">
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider4">
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider5">
+
+
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider6">
+
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider7">
+
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider8">
+
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider9">
+                                <input type="range" min="1" max="100" value="50" class="slider" id="slider10">
                             </div>
-                            <div class="form-group">
-                                <label for="slider-e">Slider E</label>
-                                <input type="range" class="form-control-range" id="slider-e" min="0" max="100"
-                                    value="50">
+                            <div class="slider-group" id="vowels-sliders">
+                                <div class="form-group">
+                                    <label for="slider-a">Slider A</label>
+                                    <input type="range" class="form-control-range" id="slider-a" min="0" max="100"
+                                        value="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slider-e">Slider E</label>
+                                    <input type="range" class="form-control-range" id="slider-e" min="0" max="100"
+                                        value="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slider-i">Slider I</label>
+                                    <input type="range" class="form-control-range" id="slider-i" min="0" max="100"
+                                        value="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slider-o">Slider O</label>
+                                    <input type="range" class="form-control-range" id="slider-o" min="0" max="100"
+                                        value="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slider-u">Slider U</label>
+                                    <input type="range" class="form-control-range" id="slider-u" min="0" max="100"
+                                        value="50">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="slider-i">Slider I</label>
-                                <input type="range" class="form-control-range" id="slider-i" min="0" max="100"
-                                    value="50">
+                            <div class="slider-group" id="musical-instruments-sliders">
+                                <div class="form-group">
+                                    <label for="slider-piano">Slider Piano</label>
+                                    <input type="range" class="form-control-range" id="slider-piano" min="0" max="100"
+                                        value="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slider-guitar">Slider Guitar</label>
+                                    <input type="range" class="form-control-range" id="slider-guitar" min="0" max="100"
+                                        value="50">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="slider-o">Slider O</label>
-                                <input type="range" class="form-control-range" id="slider-o" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-u">Slider U</label>
-                                <input type="range" class="form-control-range" id="slider-u" min="0" max="100"
-                                    value="50">
-                            </div>
-                        </div>
-                        <div class="slider-group" id="musical-instruments-sliders">
-                            <div class="form-group">
-                                <label for="slider-piano">Slider Piano</label>
-                                <input type="range" class="form-control-range" id="slider-piano" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                <label for="slider-guitar">Slider Guitar</label>
-                                <input type="range" class="form-control-range" id="slider-guitar" min="0" max="100"
-                                    value="50">
-                            </div>
-                        </div>
-                        <div class="slider-group" id="biological-signal-abnormalities-sliders">
-                            <div class="form-group">
-                                 <label for="slider-heartbeat">Arrythmia I</label>
-                                 <input type="range" class="form-control-range" id="slider-heartbeat" min="0" max="100"
-                                    value="50">
-                            </div>
-                            <div class="form-group">
-                                 <label for="slider-brain-waves">Arrythmia II</label>
-                                 <input type="range" class="form-control-range" id="slider-brain-waves" min="0" max="100"
-                                    value="50">
-                            </div>
+                            <div class="slider-group" id="biological-signal-abnormalities-sliders">
+                                <div class="container">
+                               <div class="form-group">
+                                    <label for="slider-heartbeat"><h4>Arrythmia I</h4></label>
+                                    <input type="range" min="1" max="100" value="50" class="slider" id="slider-heartbeat">
+                                    <!--<input type="range" class="form-control-range" id="slider-heartbeat" min="0" max="100" value="50">-->
+                                    <label for="slider-brain-waves"><h4>Arrythmia II</h4></label>
+                                    <input type="range" min="1" max="100" value="50" class="slider" id="slider-brain-waves"> 
+                                    <!-- <input type="range" class="form-control-range" id="slider-brain-waves" min="0" max="100" value="50">-->
+                                </div>
+                            </div> 
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- </div> -->
         </div>
 
     </div>
     <script src="/static/app.js"></script>
+    <script src="/static/style.js"></script>
 </body>
 <script>
     const sliders = document.querySelectorAll('.slider');

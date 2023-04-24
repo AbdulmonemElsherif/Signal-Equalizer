@@ -31,51 +31,50 @@ window.addEventListener("load", function () {
   createPlot(outputSignal);
 });
 
-// document
-//   .getElementById("formFile")
-//   .addEventListener("change", async (event) => {
-//     file = event.target.files[0];
-//     let fileURL = URL.createObjectURL(file);
-//     inputAudio.src = fileURL;
-//     outputAudio.src = fileURL;
-//     var formData = new FormData();
-//     formData.append("audioFile", file);
-//     fetch("/readAudioFile", {
-//       method: "POST",
-//       body: formData,
-//     })
-//       .then((response) => response.json())
-//       .then((result) => {
-//         let audioDataArray = result.audioData;
-//         let time = [];
-//         sampleRate = result.sampleRate;
-//         for (let index = 0; index < audioDataArray.length; index++) {
-//           //get time from sampling frequency as  fs = 1/T
-//           time.push(index / sampleRate);
-//         }
-//         document.querySelectorAll(".slider").forEach((slider) => {
-//           slider.value = 0;
-//         });
-//         if (inputSignal.data.length === 0) {
-//           Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
-//           Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
-//         } else {
-//           Plotly.deleteTraces(inputSignal, [0]);
-//           Plotly.deleteTraces(outputSignal, [0]);
-//           Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
-//           Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
-//         }
-//       });
-//     // // Add a vertical line trace for the cursor
-//     // // const max = Math.max(audioData);
-//     // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
-//     // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
-//   });
+document
+  .getElementById("formFile")
+  .addEventListener("change", async (event) => {
+    file = event.target.files[0];
+    let fileURL = URL.createObjectURL(file);
+    inputAudio.src = fileURL;
+    outputAudio.src = fileURL;
+    var formData = new FormData();
+    formData.append("audioFile", file);
+    fetch("/readAudioFile", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        let audioDataArray = result.audioData;
+        let time = [];
+        sampleRate = result.sampleRate;
+        for (let index = 0; index < audioDataArray.length; index++) {
+          //get time from sampling frequency as  fs = 1/T
+          time.push(index / sampleRate);
+        }
+        document.querySelectorAll(".slider").forEach((slider) => {
+          slider.value = 0;
+        });
+        if (inputSignal.data.length === 0) {
+          Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
+          Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
+        } else {
+          Plotly.deleteTraces(inputSignal, [0]);
+          Plotly.deleteTraces(outputSignal, [0]);
+          Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
+          Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
+        }
+      });
+    // // Add a vertical line trace for the cursor
+    // // const max = Math.max(audioData);
+    // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
+    // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
+  });
 
   document.getElementById("formfile").addEventListener("change", async (event)=> {
-    const file = document.getElementById("formfile").files[0];
+    const file =  event.target.files[0];
     const fileType = file.type;
-    let data;
     if(fileType == 'text/csv')
     {
       const formData = new FormData();
@@ -106,14 +105,12 @@ window.addEventListener("load", function () {
  });
 
  function convertCsvToTrace(csvdata) {
-  // Extract data from the CSV data
   let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
   let y = csvdata.map((arrRow) => arrRow.col2).slice(0, 1000);
-  let uploadedSignal = { name: "Original Signal", x: x, y: y };
-  // If there are no existing signals, add the uploaded signal as a trace to the plot else add the uploaded signal as a component to the plot
+  let uploadedSignal = { name: "input Signal", x: x, y: y };
   if (signals.length == 0) {
     signals.push(uploadedSignal);
-    Plotly.addTraces(signalGraph, uploadedSignal);
+    Plotly.addTraces(inputSignal, uploadedSignal);
   }
 }
 
@@ -137,17 +134,49 @@ function createPlot(graphElement) {
 }
 
 // Define function to update equalizer sliders based on selected mode
-function updateSliders(selectedIndex) {
-  const sliderGroups = document.querySelectorAll(".slider-group");
-  equalizerContainer.style.display = "block";
-  sliderGroups.forEach((sliderGroup, index) => {
-    if (index === selectedIndex - 1) {
-      sliderGroup.style.display = "block";
-    } else {
-      sliderGroup.style.display = "none";
-    }
-  });
+function updateSliders() {
+  // Remove existing sliders
+  if (sliders) {
+    sliders.remove();
+  }
+  // Create new sliders based on selected mode
+  const mode = modeSelector.value;  
+  // Hide the sliders if no mode is selected
+  if (mode == "select-mode") {
+    equalizerContainer.style.display = "none";
+  } else {
+    equalizerContainer.style.display = "block";
+  }
+  switch (mode) {
+    case "uniform-range":
+      sliders = document.getElementById("uniform-range-sliders").cloneNode(true);
+      break;
+    case "vowels":
+      sliders = document.getElementById("vowels-sliders").cloneNode(true);
+      break;
+    case "musical-instruments":
+      sliders = document.getElementById("musical-instruments-sliders").cloneNode(true);
+      break;
+    case "biological-signal-abnormalities":
+      sliders = document.getElementById("biological-signal-abnormalities-sliders").cloneNode(true);
+      break;
+    default:
+      sliders = document.createElement("div");
+      break;
+  }
+  // Add new sliders to equalizer container
+  equalizerContainer.appendChild(sliders);
 }
+
+// Add event listener to mode selector
+modeSelector.addEventListener("change", updateSliders);
+
+window.addEventListener("load", function () {
+  createPlot(inputSignal);
+  createPlot(outputSignal);
+  // Call updateSliders function to initialize equalizer sliders
+  updateSliders();
+});
 
 function getSliderValues(){
   let sliderValues = [];
@@ -181,28 +210,6 @@ function handleSliderChange() {
     });
   }
 
-  
-document.querySelectorAll(".stopbutton").forEach((button, index) => {
-  button.addEventListener("click", () => {
-    if (index === 0) {
-      inputAudio.pause();
-      inputAudio.currentTime = 0;
-    } else {
-      outputAudio.pause();
-      outputAudio.currentTime = 0;
-    }
-  });
-});
-
-document.querySelector("#spectrogram-toggle").addEventListener("change", (event) => {
-  document.querySelectorAll(".spectrogram").forEach((spectrogram) => {
-    if (event.target.checked) {
-      spectrogram.style.display = "block";
-    } else {
-      spectrogram.style.display = "none";
-    }
-  });
-});
 
 document.getElementById("ECG").addEventListener("change", function(){
   const file = document.getElementById('ECG').files[0];
@@ -216,3 +223,27 @@ document.getElementById("ECG").addEventListener("change", function(){
       const graphData = JSON.parse(response.data);
     });
 });                                                                     
+
+
+document.querySelectorAll(".stopbutton").forEach((button,index) => {
+  button.addEventListener("click", () => {
+    if(index===0){
+      inputAudio.pause();
+      inputAudio.currentTime = 0;
+    }else{
+      outputAudio.pause();
+      outputAudio.currentTime = 0;
+    }
+  });
+});
+
+document.querySelector("#spectrogram-toggle").addEventListener('change',(event)=>{
+  document.querySelectorAll(".spectrogram").forEach((spectrogram)=>{
+      if (event.target.checked) {
+          spectrogram.style.display='block';
+        }
+        else{
+          spectrogram.style.display = "none";
+        }
+      })
+});

@@ -16,7 +16,7 @@ def index():
     return render_template('index.html')
 
 #to upload the file 
-@app.route('/uploadfile', methods=['POST'])
+@app.route('/uploadfile', methods=['GET','POST'])
 def uploadfile():
     file = request.files['file']
     if file and file.filename.endswith('.csv'):
@@ -26,19 +26,19 @@ def uploadfile():
             csv_data.append(row)
         return jsonify(csv_data)
 
-#to detect arrythmia
-# @app.route('/detectArrythmia', methods=['POST'])
-# def detectArrythmia():
-#     file = request.files['file']
-#     if file.filename.endswith('.csv'):
-#         arrhythmia_values = []
-#         csv_reader = csv.DictReader(file)
-#         for row in csv_reader:
-#             # Replace 'column_name' with the name of the column containing arrhythmia values
-#             arrhythmia_values.append(float(row['column_name']))
-#         return jsonify(arrhythmia_values)
-#     else:
-#         return jsonify({'error': 'Invalid file type'})
+# to detect arrythmia
+@app.route('/detectArrythmia', methods=['POST'])
+def detectArrythmia():
+    file = request.files['file']
+    if file.filename.endswith('.csv'):
+        arrhythmia_values = []
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            # Replace 'column_name' with the name of the column containing arrhythmia values
+            arrhythmia_values.append(float(row['column_name']))
+        return jsonify(arrhythmia_values)
+    else:
+        return jsonify({'error': 'Invalid file type'})
 
     
 
