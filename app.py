@@ -1,5 +1,12 @@
 from flask import Flask, render_template, redirect, url_for, request,Response,jsonify,send_file
-from audioProcessing import AudioProcessor
+from audioProcessing import AudioProcessor 
+import librosa
+import json
+import soundfile as sf
+import io
+import csv
+import wave
+import struct
 
 app = Flask(__name__)
 audio_processor = AudioProcessor()
@@ -27,6 +34,33 @@ def inputspectrogram():
 def outputspectrogram():
     outputFile = request.files['outputFile']
     return audio_processor.output_spectrogram(outputFile)
+
+
+#to upload the file 
+@app.route('/uploadfile', methods=['GET','POST'])
+def uploadfile():
+    file = request.files['file']
+    if file and file.filename.endswith('.csv'):
+        csv_data = []
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            csv_data.append(row)
+        return jsonify(csv_data)
+
+# to detect arrythmia
+@app.route('/detectArrythmia', methods=['POST'])
+def detectArrythmia():
+    file = request.files['file']
+    if file.filename.endswith('.csv'):
+        arrhythmia_values = []
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            # Replace 'column_name' with the name of the column containing arrhythmia values
+            arrhythmia_values.append(float(row['column_name']))
+        return jsonify(arrhythmia_values)
+    else:
+        return jsonify({'error': 'Invalid file type'})
+
 
 if __name__ == "__main__":
     app.run(debug=True)

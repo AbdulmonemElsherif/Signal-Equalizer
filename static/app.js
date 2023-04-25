@@ -142,6 +142,49 @@ function readAudioFile(formData) {
   // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
 }
 
+
+document.getElementById("formfile").addEventListener("change", async (event)=> {
+  const file =  event.target.files[0];
+  const fileType = file.type;
+  if(fileType == 'text/csv')
+  {
+    const formData = new FormData();
+    formData.append('file', file);
+    fetch('/upload_csv', {
+        method: 'POST',
+        body: formData
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (inputSignal.data.length === 0) {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+        data = reader.result
+        .trim()
+        .split("\n")
+        .map((row) => {
+        const [col1, col2] = row.split(",");
+        return { col1: parseFloat(col1), col2: parseFloat(col2) };
+        });
+      }
+    }
+    convertCsvToTrace(data);
+
+  });
+}
+});
+
+function convertCsvToTrace(csvdata) {
+let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
+let y = csvdata.map((arrRow) => arrRow.col2).slice(0, 1000);
+let uploadedSignal = { name: "input Signal", x: x, y: y };
+if (signals.length == 0) {
+  signals.push(uploadedSignal);
+  Plotly.addTraces(inputSignal, uploadedSignal);
+}
+}
+
 function processUniformAudio(file){
     var formData = new FormData();
     formData.append("audioFile", file);
