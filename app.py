@@ -27,6 +27,10 @@ def inputspectrogram():
 def outputspectrogram():
     outputFile = request.files['outputFile']
     return audio_processor.output_spectrogram(outputFile)
+@app.route('/vowelProcessing', methods=['POST'])
+def vowelProcessing():
+    sliderValues = request.form['sliderValues']
+    return audio_processor.process_vowel_audio(sliderValues)
 
 if __name__ == "__main__":
     app.run(debug=True)
