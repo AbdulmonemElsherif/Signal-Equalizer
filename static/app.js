@@ -14,7 +14,7 @@ const inputAudio = document.getElementById("inputaudio");
 const outputAudio = document.getElementById("outputaudio");
 let file;
 let plotted=false;
-
+let modeBool=[0,0,0,0];
 //--------------------------------------EVENT LISTENERS---------------------------------------------
 
 document.querySelectorAll(".slider").forEach((slider)=>{
@@ -80,7 +80,7 @@ document.querySelector("#spectrogram-toggle").addEventListener("change", (event)
 // });
 
  
-//---------------------------------------FUNCTIONS----------------------------------------------------------
+//--------------------------------------FUNCTIONS----------------------------------------------------------
 
 function createPlot(graphElement) {
   let layout = {
@@ -181,19 +181,32 @@ function getSliderValues(){
   if (selectedModeIndex === 1) {
     document.querySelectorAll(".uniformmode").forEach((slider) => {
       sliderValues.push(slider.value);
+      modeBool[0]=1;
     });
   } else if (selectedModeIndex === 2) {
     document.querySelectorAll(".vowels").forEach((slider) => {
       sliderValues.push(slider.value);
+      modeBool[1] = 1;
+    });
+  } else if (selectedModeIndex === 3) {
+    document.querySelectorAll(".vowels").forEach((slider) => {
+      sliderValues.push(slider.value);
+      modeBool[2] = 1;
+    });
+    } else if (selectedModeIndex === 4) {
+    document.querySelectorAll(".vowels").forEach((slider) => {
+      sliderValues.push(slider.value);
+      modeBool[3] = 1;
     });
   }
   return sliderValues;
-}
+}  
 
 function handleSliderChange() {
   sliderValues = getSliderValues();
   var formData = new FormData();
   formData.append("sliderValues", JSON.stringify(sliderValues));
+  formData.append("mode", JSON.stringify(modeBool));
   fetch("/audioProcessing", {
     method: "POST",
     body: formData,

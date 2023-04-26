@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 
 class AudioProcessor:
     def __init__(self):
-        self.frequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
-
+        self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
+        self.vowelFrequencyBands = [[730, 1090], [530, 1700],[330, 2400],[300, 640],[325, 700]]
+    
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
         self.sample_rate=sr
@@ -35,20 +36,31 @@ class AudioProcessor:
         modified_signal = np.fft.ifft(fft)
         return modified_signal
 
-    def process_uniform_audio(self,sliderValues):
+    def process_uniform_audio(self,sliderValues,mode):
         fft_data = self.perform_fft(self.audio_data, self.sample_rate)
         signal_fft_freq = fft_data['frequency']
         magnitude = fft_data['magnitude']
         phase = fft_data['phase']
         gainValues = np.array(json.loads(sliderValues))
         gainValues = [int(val) for val in gainValues]
+        mode = np.array(json.loads(mode))
+        mode = [int(val) for val in mode]
+        print(mode)
         gainValuesIterator=0
-        for band in self.frequencyBands:
-            indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
-            for index in indices[0]:
-                magnitude[index] *= gainValues[gainValuesIterator]
-            if gainValuesIterator<len(gainValues):
-                gainValuesIterator+=1
+        if mode[0]==1:
+            for band in self.uniformFrequencyBands:
+                indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+                for index in indices[0]:
+                    magnitude[index] *= gainValues[gainValuesIterator]
+                if gainValuesIterator<len(gainValues):
+                    gainValuesIterator+=1
+        elif mode[1]==1:
+            for band in self.vowelFrequencyBands:
+                indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+                for index in indices[0]:
+                    magnitude[index] *= gainValues[gainValuesIterator]
+                if gainValuesIterator<len(gainValues):
+                    gainValuesIterator+=1
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)
         wav_file = io.BytesIO()
@@ -82,65 +94,66 @@ class AudioProcessor:
     def output_spectrogram(self,audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
         return self.plot_spectrogram(audio_data,sr)
+    
     # def process_vowel_audio(self, sliderValues):
-    # # Define the frequency bands for each vowel
-    # vowelBands = {
-    #     'a': [730, 1090],
-    #     'e': [530, 1700],
-    #     'i': [330, 2400],
-    #     'o': [300, 640],
-    #     'u': [325, 700]
-    # }
-    # # Perform FFT on the audio data
-    # fft_data = self.perform_fft(self.audio_data, self.sample_rate)
-    # signal_fft_freq = fft_data['frequency']
-    # magnitude = fft_data['magnitude']
-    # phase = fft_data['phase']
-    # # Parse the slider values
-    # sliderValues = json.loads(sliderValues)
-    # # Modify the magnitude of the FFT based on the vowel sliders
-    # for vowel, gain in sliderValues.items():
-    #     if vowel in vowelBands:
-    #         band = vowelBands[vowel]
-    #         indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
-    #         for index in indices[0]:
-    #             magnitude[index] *= gain
-    # # Perform IFFT on the modified FFT
-    # modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
-    # time_domain_signal = np.real(modified_signal)
-    # # Return the modified audio data as a WAV file
-    # wav_file = io.BytesIO()
-    # sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
-    # wav_file.seek(0)
-    # return send_file(wav_file, mimetype='audio/wav')
-def process_vowel_audio(self, sliderValues):
-    # Perform formant analysis on the audio data
-    formants = librosa.formant.track(self.audio_data, sr=self.sample_rate, order=2)
-    # Define the frequency bands for each vowel based on the formant frequencies
-    vowelBands = {}
-    for i, vowel in enumerate(['a', 'e', 'i', 'o', 'u']):
-        if i < len(formants):
-            f1, f2 = formants[i]
-            vowelBands[vowel] = [int(f1 - 50), int(f2 + 50)]
-    # Perform FFT on the audio data
-    fft_data = self.perform_fft(self.audio_data, self.sample_rate)
-    signal_fft_freq = fft_data['frequency']
-    magnitude = fft_data['magnitude']
-    phase = fft_data['phase']
-    # Parse the slider values
-    sliderValues = json.loads(sliderValues)
-    # Modify the magnitude of the FFT based on the vowel sliders
-    for vowel, gain in sliderValues.items():
-        if vowel in vowelBands:
-            band = vowelBands[vowel]
-            indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
-            for index in indices[0]:
-                magnitude[index] *= gain
-    # Perform IFFT on the modified FFT
-    modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
-    time_domain_signal = np.real(modified_signal)
-    # Return the modified audio data as a WAV file
-    wav_file = io.BytesIO()
-    sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
-    wav_file.seek(0)
-    return send_file(wav_file, mimetype='audio/wav')
+    #     # Define the frequency bands for each vowel
+    #     vowelBands = {
+    #         'a': [730, 1090],
+    #         'e': [530, 1700],
+    #         'i': [330, 2400],
+    #         'o': [300, 640],
+    #         'u': [325, 700]
+    #     }
+    #     # Perform FFT on the audio data
+    #     fft_data = self.perform_fft(self.audio_data, self.sample_rate)
+    #     signal_fft_freq = fft_data['frequency']
+    #     magnitude = fft_data['magnitude']
+    #     phase = fft_data['phase']
+    #     # Parse the slider values
+    #     sliderValues = np.array(json.loads(sliderValues))
+    #     # Modify the magnitude of the FFT based on the vowel sliders
+    #     for vowel, gain in sliderValues:
+    #         if vowel in vowelBands:
+    #             band = vowelBands[vowel]
+    #             indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+    #             for index in indices[0]:
+    #                 magnitude[index] *= gain
+    #     # Perform IFFT on the modified FFT
+    #     modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
+    #     time_domain_signal = np.real(modified_signal)
+    #     # Return the modified audio data as a WAV file
+    #     wav_file = io.BytesIO()
+    #     sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
+    #     wav_file.seek(0)
+    #     return send_file(wav_file, mimetype='audio/wav')
+    # def process_vowel_audio(self, sliderValues):
+    #     # Perform formant analysis on the audio data
+    #     formants = librosa.formants(self.audio_data, sr=self.sample_rate, order=2)
+    #     # Define the frequency bands for each vowel based on the formant frequencies
+    #     vowelBands = {}
+    #     for i, vowel in enumerate(['a', 'e', 'i', 'o', 'u']):
+    #         if i < len(formants):
+    #             f1, f2 = formants[i]
+    #             vowelBands[vowel] = [int(f1 - 50), int(f2 + 50)]
+    #     # Perform FFT on the audio data
+    #     fft_data = self.perform_fft(self.audio_data, self.sample_rate)
+    #     signal_fft_freq = fft_data['frequency']
+    #     magnitude = fft_data['magnitude']
+    #     phase = fft_data['phase']
+    #     # Parse the slider values
+    #     sliderValues = json.loads(sliderValues)
+    #     # Modify the magnitude of the FFT based on the vowel sliders
+    #     for vowel, gain in sliderValues.items():
+    #         if vowel in vowelBands:
+    #             band = vowelBands[vowel]
+    #             indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+    #             for index in indices[0]:
+    #                 magnitude[index] *= gain
+    #     # Perform IFFT on the modified FFT
+    #     modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
+    #     time_domain_signal = np.real(modified_signal)
+    #     # Return the modified audio data as a WAV file
+    #     wav_file = io.BytesIO()
+    #     sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
+    #     wav_file.seek(0)
+    #     return send_file(wav_file, mimetype='audio/wav')
