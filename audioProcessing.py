@@ -8,6 +8,9 @@ import base64
 import io
 import soundfile as sf
 import matplotlib.pyplot as plt
+import matplotlib 
+matplotlib.use('Agg')
+
 
 
 class AudioProcessor:
