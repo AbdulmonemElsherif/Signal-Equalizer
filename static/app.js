@@ -14,7 +14,7 @@ const inputAudio = document.getElementById("inputaudio");
 const outputAudio = document.getElementById("outputaudio");
 let file;
 let plotted=false;
-
+let signals=[]
 //--------------------------------------EVENT LISTENERS---------------------------------------------
 
 document.querySelectorAll(".slider").forEach((slider)=>{
@@ -40,14 +40,41 @@ window.addEventListener("load", function () {
   });  
 });
 
-document.getElementById("formFile").addEventListener("change", async (event) => {
-    file = event.target.files[0];
-    let fileURL = URL.createObjectURL(file);
-    inputAudio.src = fileURL;
-    outputAudio.src = fileURL;
-    var formData = new FormData();
-    formData.append("audioFile", file);
-    readAudioFile(formData);
+document
+  .getElementById("formFile")
+  .addEventListener("change", async (event) => {
+    let file = event.target.files[0];
+    const fileType = file.type;
+
+    if (fileType != "text/csv") {
+      let fileURL = URL.createObjectURL(file);
+      inputAudio.src = fileURL;
+      outputAudio.src = fileURL;
+      var formData = new FormData();
+      formData.append("audioFile", file);
+      readAudioFile(formData);
+    } else {
+      // Create a new file reader instance
+      const reader = new FileReader();
+      // Read the file as text
+      reader.readAsText(file);
+      let data;
+      // Trigger this function when the file is loaded
+      reader.onload = () => {
+        // Parse the CSV data into an array of objects
+        data = reader.result
+          .trim()
+          .split("\n")
+          .map((row) => {
+            // Split each row by comma and convert the values to numbers
+            const [col1, col2] = row.split(",");
+            return { col1: parseFloat(col1), col2: parseFloat(col2) };
+          });
+        // Convert the CSV data to a trace and update the graph
+        convertCsvToTrace(data);
+        plotGraphs(signals[0].x, signals[0].y);
+      };
+    }
   });
 
   document.querySelectorAll(".stopbutton").forEach((button, index) => {
@@ -125,21 +152,35 @@ function readAudioFile(formData) {
       document.querySelectorAll(".slider").forEach((slider) => {
         slider.value = 0;
       });
-      if (inputSignal.data.length === 0) {
-        Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
-        Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
-      } else {
-        Plotly.deleteTraces(inputSignal, [0]);
-        Plotly.deleteTraces(outputSignal, [0]);
-        Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
-        Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
-      }
-      plotInitialSpectrograms();
-    });
+      plotGraphs(time,audioDataArray);
+ });
   // // Add a vertical line trace for the cursor
   // // const max = Math.max(audioData);
   // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
   // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
+}
+
+function plotGraphs(x, y) {
+  if (inputSignal.data.length === 0) {
+    Plotly.addTraces(inputSignal, { x: x, y: y });
+    Plotly.addTraces(outputSignal, { x: x, y: y });
+  } else {
+    Plotly.deleteTraces(inputSignal, 0);
+    Plotly.deleteTraces(outputSignal, 0);
+    Plotly.addTraces(inputSignal, { x: x, y: y });
+    Plotly.addTraces(outputSignal, { x: x, y: y });
+  }
+  plotInitialSpectrograms();
+}
+
+function convertCsvToTrace(csvdata) {
+  let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
+  let y = csvdata.map((arrRow) => arrRow.col2).slice(0, 1000);
+  let uploadedSignal = { x: x, y: y };
+  if (signals.length == 0) {
+    signals.push(uploadedSignal);
+    // Plotly.addTraces(inputSignal, uploadedSignal);
+  }
 }
 
 function processUniformAudio(file){
