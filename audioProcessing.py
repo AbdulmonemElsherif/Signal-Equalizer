@@ -82,15 +82,46 @@ class AudioProcessor:
     def output_spectrogram(self,audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
         return self.plot_spectrogram(audio_data,sr)
-    def process_vowel_audio(self, sliderValues):
-    # Define the frequency bands for each vowel
-    vowelBands = {
-        'a': [730, 1090],
-        'e': [530, 1700],
-        'i': [330, 2400],
-        'o': [300, 640],
-        'u': [325, 700]
-    }
+    # def process_vowel_audio(self, sliderValues):
+    # # Define the frequency bands for each vowel
+    # vowelBands = {
+    #     'a': [730, 1090],
+    #     'e': [530, 1700],
+    #     'i': [330, 2400],
+    #     'o': [300, 640],
+    #     'u': [325, 700]
+    # }
+    # # Perform FFT on the audio data
+    # fft_data = self.perform_fft(self.audio_data, self.sample_rate)
+    # signal_fft_freq = fft_data['frequency']
+    # magnitude = fft_data['magnitude']
+    # phase = fft_data['phase']
+    # # Parse the slider values
+    # sliderValues = json.loads(sliderValues)
+    # # Modify the magnitude of the FFT based on the vowel sliders
+    # for vowel, gain in sliderValues.items():
+    #     if vowel in vowelBands:
+    #         band = vowelBands[vowel]
+    #         indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+    #         for index in indices[0]:
+    #             magnitude[index] *= gain
+    # # Perform IFFT on the modified FFT
+    # modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
+    # time_domain_signal = np.real(modified_signal)
+    # # Return the modified audio data as a WAV file
+    # wav_file = io.BytesIO()
+    # sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
+    # wav_file.seek(0)
+    # return send_file(wav_file, mimetype='audio/wav')
+def process_vowel_audio(self, sliderValues):
+    # Perform formant analysis on the audio data
+    formants = librosa.formant.track(self.audio_data, sr=self.sample_rate, order=2)
+    # Define the frequency bands for each vowel based on the formant frequencies
+    vowelBands = {}
+    for i, vowel in enumerate(['a', 'e', 'i', 'o', 'u']):
+        if i < len(formants):
+            f1, f2 = formants[i]
+            vowelBands[vowel] = [int(f1 - 50), int(f2 + 50)]
     # Perform FFT on the audio data
     fft_data = self.perform_fft(self.audio_data, self.sample_rate)
     signal_fft_freq = fft_data['frequency']
