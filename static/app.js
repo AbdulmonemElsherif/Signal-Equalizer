@@ -14,6 +14,7 @@ const inputAudio = document.getElementById("inputaudio");
 const outputAudio = document.getElementById("outputaudio");
 let file;
 let plotted=false;
+let signals=[];
 
 //--------------------------------------EVENT LISTENERS---------------------------------------------
 
@@ -41,13 +42,43 @@ window.addEventListener("load", function () {
 });
 
 document.getElementById("formFile").addEventListener("change", async (event) => {
-    file = event.target.files[0];
+    let file = event.target.files[0];
+    const fileType = file.type;
+
+    if(fileType != 'text/csv'){
+
     let fileURL = URL.createObjectURL(file);
     inputAudio.src = fileURL;
     outputAudio.src = fileURL;
     var formData = new FormData();
     formData.append("audioFile", file);
     readAudioFile(formData);
+  }
+  else{
+ // Create a new file reader instance
+ const reader = new FileReader();
+ // Read the file as text
+ reader.readAsText(file);
+ let data;
+ // Trigger this function when the file is loaded
+ reader.onload = () => {
+   // Parse the CSV data into an array of objects
+   data = reader.result
+     .trim()
+     .split("\n")
+     .map((row) => {
+       // Split each row by comma and convert the values to numbers
+       const [col1, col2] = row.split(",");
+       return { col1: parseFloat(col1), col2: parseFloat(col2) };
+     });
+   // Convert the CSV data to a trace and update the graph
+   console.log(data);
+   convertCsvToTrace(data);
+  //  Plotly.addTraces(inputSignal, { x: signals[0].x, y: signals[0].y });
+  //   Plotly.addTraces(outputSignal, { x: signals[0].x, y: signals[0].y  });
+   plotGraphs(signals[0].x,signals[0].y);
+ };
+  }
   });
 
   document.querySelectorAll(".stopbutton").forEach((button, index) => {
@@ -125,64 +156,99 @@ function readAudioFile(formData) {
       document.querySelectorAll(".slider").forEach((slider) => {
         slider.value = 0;
       });
-      if (inputSignal.data.length === 0) {
-        Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
-        Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
-      } else {
-        Plotly.deleteTraces(inputSignal, [0]);
-        Plotly.deleteTraces(outputSignal, [0]);
-        Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
-        Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
-      }
-      plotInitialSpectrograms();
+      plotGraphs(time,audioDataArray);
+      // if (inputSignal.data.length === 0) {
+      //   Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
+      //   Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
+      // } else {
+      //   Plotly.deleteTraces(inputSignal, [0]);
+      //   Plotly.deleteTraces(outputSignal, [0]);
+      //   Plotly.addTraces(inputSignal, { x: time, y: audioDataArray });
+      //   Plotly.addTraces(outputSignal, { x: time, y: audioDataArray });
+      // }
+      // plotInitialSpectrograms();
     });
   // // Add a vertical line trace for the cursor
   // // const max = Math.max(audioData);
   // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
   // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
 }
-
-
-document.getElementById("formfile").addEventListener("change", async (event)=> {
-  const file =  event.target.files[0];
-  const fileType = file.type;
-  if(fileType == 'text/csv')
-  {
-    const formData = new FormData();
-    formData.append('file', file);
-    fetch('/upload_csv', {
-        method: 'POST',
-        body: formData
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      if (inputSignal.data.length === 0) {
-        const reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = () => {
-        data = reader.result
-        .trim()
-        .split("\n")
-        .map((row) => {
-        const [col1, col2] = row.split(",");
-        return { col1: parseFloat(col1), col2: parseFloat(col2) };
-        });
-      }
-    }
-    convertCsvToTrace(data);
-
-  });
+function plotGraphs(x,y){
+  if (inputSignal.data.length === 0) {
+    Plotly.addTraces(inputSignal, { x: x, y: y });
+    Plotly.addTraces(outputSignal, { x: x, y: y  });
+  } else {
+    Plotly.deleteTraces(inputSignal, 0);
+    Plotly.deleteTraces(outputSignal,0);
+    Plotly.addTraces(inputSignal, {x: x, y: y  });
+    Plotly.addTraces(outputSignal, {x: x, y: y });
+  }
+  plotInitialSpectrograms();
 }
-});
+
+// document.getElementById("formFile").addEventListener("change",(event)=>{
+//   const newfile =  event.target.files[0];
+//   const fileType = newfile.type;
+//   if(fileType == 'text/csv')
+//   {
+//     // const formData = new FormData();
+//     // formData.append('file', file);
+//     // fetch('/uploadfile', {
+//     //     method: 'POST',
+//     //     body: formData
+//     // })
+//     // .then((response) => response.json())
+//     // .then((data) => {
+//     //   if (inputSignal.data.length === 0) {
+//     //     const reader = new FileReader();
+//     //     reader.readAsText(file);
+//     //     reader.onload = () => {
+//     //     data = reader.result
+//     //     .trim()
+//     //     .split("\n")
+//     //     .map((row) => {
+//     //     const [col1, col2] = row.split(",");
+//     //     return { col1: parseFloat(col1), col2: parseFloat(col2) };
+//     //     });
+//     //   }
+//     // }
+//     // convertCsvToTrace(data);
+//       // Set the isUploaded flag to true when a file is selected
+//       // isUploaded = true;
+//       // Retrieve the file object from the event target
+//       // const file = event.target.files[0];
+//       // Create a new file reader instance
+//       const reader = new FileReader();
+//       // Read the file as text
+//       reader.readAsText(newfile);
+//       let data;
+//       // Trigger this function when the file is loaded
+//       reader.onload = () => {
+//         // Parse the CSV data into an array of objects
+//         data = reader.result
+//           .trim()
+//           .split("\n")
+//           .map((row) => {
+//             // Split each row by comma and convert the values to numbers
+//             const [col1, col2] = row.split(",");
+//             return { col1: parseFloat(col1), col2: parseFloat(col2) };
+//           });
+//         // Convert the CSV data to a trace and update the graph
+//         console.log(data);
+//         convertCsvToTrace(data);
+//       };
+//   }
+// });
 
 function convertCsvToTrace(csvdata) {
 let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
 let y = csvdata.map((arrRow) => arrRow.col2).slice(0, 1000);
-let uploadedSignal = { name: "input Signal", x: x, y: y };
+let uploadedSignal = { x: x, y: y };
 if (signals.length == 0) {
   signals.push(uploadedSignal);
-  Plotly.addTraces(inputSignal, uploadedSignal);
+  // Plotly.addTraces(inputSignal, uploadedSignal);
 }
+console.log(signals[0])
 }
 
 function processUniformAudio(file){

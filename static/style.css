@@ -35,6 +35,7 @@ label {
 
 .slider {
   -webkit-appearance: none;
+  appearance: none;
   writing-mode: bt-lr;
   /* rotate the slider vertically for other browsers */
   transform: rotate(-90deg);

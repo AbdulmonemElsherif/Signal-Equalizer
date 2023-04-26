@@ -36,16 +36,16 @@ def outputspectrogram():
     return audio_processor.output_spectrogram(outputFile)
 
 
-#to upload the file 
-@app.route('/uploadfile', methods=['GET','POST'])
-def uploadfile():
-    file = request.files['file']
-    if file and file.filename.endswith('.csv'):
-        csv_data = []
-        csv_reader = csv.DictReader(file)
-        for row in csv_reader:
-            csv_data.append(row)
-        return jsonify(csv_data)
+# #to upload the file 
+# @app.route('/uploadfile', methods=['GET','POST'])
+# def uploadfile():
+#     file = request.files['file']
+#     if file and file.filename.endswith('.csv'):
+#         csv_data = []
+#         csv_reader = csv.DictReader(file)
+#         for row in csv_reader:
+#             csv_data.append(row)
+#         return jsonify(csv_data)
 
 # to detect arrythmia
 @app.route('/detectArrythmia', methods=['POST'])
