@@ -189,12 +189,12 @@ function getSliderValues(){
       modeBool[1] = 1;
     });
   } else if (selectedModeIndex === 3) {
-    document.querySelectorAll(".vowels").forEach((slider) => {
+    document.querySelectorAll(".music").forEach((slider) => {
       sliderValues.push(slider.value);
       modeBool[2] = 1;
     });
     } else if (selectedModeIndex === 4) {
-    document.querySelectorAll(".vowels").forEach((slider) => {
+    document.querySelectorAll(".abnormalities").forEach((slider) => {
       sliderValues.push(slider.value);
       modeBool[3] = 1;
     });
