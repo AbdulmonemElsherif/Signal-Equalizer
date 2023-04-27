@@ -26,6 +26,7 @@ def rangeEqualizer():
     sliderValues = request.form['sliderValues']
     return audio_processor.process_uniform_audio(sliderValues)
 
+
 @app.route('/detectArrhythmia',methods=['POST'])
 def detectArrhythmia():
     arrSliderValue = request.form['sliderValues']

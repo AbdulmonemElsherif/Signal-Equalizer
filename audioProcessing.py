@@ -19,13 +19,13 @@ class AudioProcessor:
         self.audio_data=audioData
         self.sample_rate=sr
         
-    def set_arrythmia_data(self, csv_file, srr):
+    def read_arrythmia_data(self, csv_file):
         csv_data = pd.read_csv(csv_file)
+        srr=360
         arrythmia_data = csv_data['arrythmia_data'].tolist()
-        self.arrythmia_data = arrythmia_data
-        self.arrythmia_sample_rate = srr
+        return {"arrythmia_data": arrythmia_data, "sampleRate": srr}
+      
         
-
     def upload_audio(self, audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
         self.set_audio_data(audio_data,sr)

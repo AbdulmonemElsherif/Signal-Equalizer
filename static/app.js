@@ -244,6 +244,7 @@ let uploadedSignal = { x: x, y: y };
 if (signals.length == 0) {
   signals.push(uploadedSignal);
   // Plotly.addTraces(inputSignal, uploadedSignal);
+  
 }else{
   signals.pop();
   signals.push(uploadedSignal);
@@ -277,7 +278,9 @@ function processArrythmia(file){
       method: "POST",
       body: formData,
     })
-    .then((response) => response.json())
+    .then((response) => {response.json()
+    console.log(response);
+     })
     .then((result) => {
       let arrythmiaArray = result.arrythmiaData;
       let time=[];
@@ -285,6 +288,7 @@ function processArrythmia(file){
       for (let index = 0; index < arrythmiaArray.length; index++) {
         time.push(index / sampleRate);
       }
+      console.log(result);
       Plotly.update(outputSignal, { x: [time], y: [arrythmiaArray] },{},0);
     });
 }
@@ -356,7 +360,7 @@ function handleSliderChange() {
       outputAudio.src = URL.createObjectURL(result);
       processUniformAudio(result);
     });
-}
+ }
 }
 
 
