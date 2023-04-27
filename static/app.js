@@ -187,6 +187,11 @@ function getSliderValues(){
       sliderValues.push(slider.value);
     });
   }
+  else if (selectedModeIndex === 3) {
+    document.querySelectorAll(".musicMode").forEach((slider) => {
+      sliderValues.push(slider.value);
+    });
+  }
   return sliderValues;
 }
 
