@@ -238,8 +238,9 @@ function plotGraphs(x,y){
 // });
 
 function convertCsvToTrace(csvdata) {
-let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
-let y = csvdata.map((arrRow) => arrRow.col2).slice(0, 1000);
+  console.log(csvdata);
+let x = csvdata.map((arrRow) => arrRow.col1).slice(1, 1000);
+let y = csvdata.map((arrRow) => arrRow.col2).slice(1, 1000);
 let uploadedSignal = { x: x, y: y };
 if (signals.length == 0) {
   signals.push(uploadedSignal);
@@ -271,27 +272,27 @@ function processUniformAudio(file){
       });
 }
 
-function processArrythmia(file){
-  var formData = new FormData();
-    formData.append("csvFile", file);
-    fetch("/detectArrhythmia",{
-      method: "POST",
-      body: formData,
-    })
-    .then((response) => {response.json()
-    console.log(response);
-     })
-    .then((result) => {
-      let arrythmiaArray = result.arrythmiaData;
-      let time=[];
-      sampleRate = result.sampleRate;
-      for (let index = 0; index < arrythmiaArray.length; index++) {
-        time.push(index / sampleRate);
-      }
-      console.log(result);
-      Plotly.update(outputSignal, { x: [time], y: [arrythmiaArray] },{},0);
-    });
-}
+// function processArrythmia(file){
+//   var formData = new FormData();
+//     formData.append("csvFile", file);
+//     fetch("/detectArrhythmia",{
+//       method: "POST",
+//       body: formData,
+//     })
+//     .then((response) => {response.json()
+//     console.log(response);
+//      })
+//     .then((result) => {
+//       let arrythmiaArray = result.arrythmiaData;
+//       let time=[];
+//       sampleRate = result.sampleRate;
+//       for (let index = 0; index < arrythmiaArray.length; index++) {
+//         time.push(index / sampleRate);
+//       }
+//       console.log(result);
+//       Plotly.update(outputSignal, { x: [time], y: [arrythmiaArray] },{},0);
+//     });
+// }
 
 // Define function to update equalizer sliders based on selected mode
 function updateSliders(selectedIndex) {
@@ -328,24 +329,30 @@ function getSliderValues(){
 function handleSliderChange() {
  let sliderValues = getSliderValues();
   var formData = new FormData();
-  console.log(sliderValues);
   formData.append("sliderValues", JSON.stringify(sliderValues));
   formData.append("file",file);
   selectedModeIndex = document.getElementById("mode-select").selectedIndex;
   console.log(selectedModeIndex);
   if (selectedModeIndex ===4)
   {
-
+    formData.append("y", inputSignal.data[0].y);
    fetch ("/detectArrhythmia",{
     method:"POST",
     body: formData,
-    
   })
   .then((response) => response.blob())
     .then((result) => {
-      spectrogramSliderChange(result);
+      //spectrogramSliderChange(result);
       // processArrythmia(result);
-      convertCsvToTrace(result)
+      const reader = new FileReader();
+      reader.onload = () => {
+        const csvdata = reader.result;
+        const arrdata = csvdata.split("\n").map((row) => row.split(","));
+        convertCsvToTrace(csvdata);
+      };
+      reader.readAsText(result);
+      // console.log(result);
+      // convertCsvToTrace(result)
       Plotly.update(outputSignal,{x:[signals[0].x],y:[signals[0].y]},{},0)
     });
 }

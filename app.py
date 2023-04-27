@@ -7,6 +7,8 @@ import io
 import csv
 import wave
 import struct
+import pandas as pd
+
 
 app = Flask(__name__)
 audio_processor = AudioProcessor()
@@ -25,7 +27,6 @@ def readAudio():
 def rangeEqualizer():
     sliderValues = request.form['sliderValues']
     return audio_processor.process_uniform_audio(sliderValues)
-
 
 @app.route('/detectArrhythmia',methods=['POST'])
 def detectArrhythmia():
