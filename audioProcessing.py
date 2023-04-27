@@ -15,7 +15,7 @@ import scipy.signal
 class AudioProcessor:
     def __init__(self):
         self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
-        self.vowelFrequencyBands = [[700, 1700], [500, 1700],[240, 3000],[500, 700],[250, 1000]]
+        self.vowelFrequencyBands =  [[800,5000],[500,2000],[500,1200],[900,5000],[1200,5000]]
 
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
