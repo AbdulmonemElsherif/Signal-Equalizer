@@ -42,7 +42,7 @@ window.addEventListener("load", function () {
 });
 
 document.getElementById("formFile").addEventListener("change", async (event) => {
-    let file = event.target.files[0];
+     file = event.target.files[0];
     const fileType = file.type;
 
     if(fileType != 'text/csv'){
@@ -72,10 +72,7 @@ document.getElementById("formFile").addEventListener("change", async (event) => 
        
      });
    // Convert the CSV data to a trace and update the graph
-   console.log(data);
    convertCsvToTrace(data);
-  //  Plotly.addTraces(inputSignal, { x: signals[0].x, y: signals[0].y });
-  //   Plotly.addTraces(outputSignal, { x: signals[0].x, y: signals[0].y  });
    plotGraphs(signals[0].x,signals[0].y);
  };
   }
@@ -247,8 +244,10 @@ let uploadedSignal = { x: x, y: y };
 if (signals.length == 0) {
   signals.push(uploadedSignal);
   // Plotly.addTraces(inputSignal, uploadedSignal);
+}else{
+  signals.pop();
+  signals.push(uploadedSignal);
 }
-console.log(signals[0])
 }
 
 function processUniformAudio(file){
@@ -323,10 +322,31 @@ function getSliderValues(){
 }
 
 function handleSliderChange() {
-  sliderValues = getSliderValues();
+ let sliderValues = getSliderValues();
   var formData = new FormData();
+  console.log(sliderValues);
   formData.append("sliderValues", JSON.stringify(sliderValues));
-  fetch("/audioProcessing", {
+  formData.append("file",file);
+  selectedModeIndex = document.getElementById("mode-select").selectedIndex;
+  console.log(selectedModeIndex);
+  if (selectedModeIndex ===4)
+  {
+
+   fetch ("/detectArrhythmia",{
+    method:"POST",
+    body: formData,
+    
+  })
+  .then((response) => response.blob())
+    .then((result) => {
+      spectrogramSliderChange(result);
+      // processArrythmia(result);
+      convertCsvToTrace(result)
+      Plotly.update(outputSignal,{x:[signals[0].x],y:[signals[0].y]},{},0)
+    });
+}
+ else{
+   fetch("/audioProcessing", {
     method: "POST",
     body: formData,
   })
@@ -337,6 +357,8 @@ function handleSliderChange() {
       processUniformAudio(result);
     });
 }
+}
+
 
 function spectrogramSliderChange(outputfile){
   var formData = new FormData();

@@ -28,7 +28,7 @@ def rangeEqualizer():
 
 @app.route('/detectArrhythmia',methods=['POST'])
 def detectArrhythmia():
-    arrSliderValue = request.form['arrSliderValue']
+    arrSliderValue = request.form['sliderValues']
     file = request.files['file']
     if file.filename.endswith('.csv'):
         processed_file =audio_processor.process_arrythmia(arrSliderValue, file)
