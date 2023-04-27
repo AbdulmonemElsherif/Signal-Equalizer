@@ -8,11 +8,14 @@ import base64
 import io
 import soundfile as sf
 import matplotlib.pyplot as plt
+import scipy.signal
+
 
 
 class AudioProcessor:
     def __init__(self):
-        self.frequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
+        self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
+        self.vowelFrequencyBands = [[700, 1700], [500, 1700],[240, 3000],[500, 700],[250, 1000]]
 
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
@@ -35,26 +38,65 @@ class AudioProcessor:
         modified_signal = np.fft.ifft(fft)
         return modified_signal
 
-    def process_uniform_audio(self,sliderValues):
-        fft_data = self.perform_fft(self.audio_data, self.sample_rate)
+    def process_uniform_audio(self,file,sliderValues,mode):
+        output = self.upload_audio(file)
+        audio_data = output['audioData']
+        sample_rate = output['sampleRate']
+        fft_data = self.perform_fft(audio_data, sample_rate)
         signal_fft_freq = fft_data['frequency']
         magnitude = fft_data['magnitude']
         phase = fft_data['phase']
         gainValues = np.array(json.loads(sliderValues))
         gainValues = [int(val) for val in gainValues]
+        mode = np.array(json.loads(mode))
+        mode = [int(val) for val in mode]
+        print(mode)
         gainValuesIterator=0
-        for band in self.frequencyBands:
-            indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
-            for index in indices[0]:
-                magnitude[index] *= gainValues[gainValuesIterator]
-            if gainValuesIterator<len(gainValues):
-                gainValuesIterator+=1
+        if mode[0]==1:
+            frequencyBands=self.uniformFrequencyBands
+        elif mode[1]==1:
+            frequencyBands=self.vowelFrequencyBands
+        for band in frequencyBands:
+                indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+                for index in indices[0]:
+                    if gainValuesIterator == 0: # add condition here
+                        pass # do nothing
+                    else:
+                        magnitude[index] *= gainValues[gainValuesIterator]
+                if gainValuesIterator<len(gainValues):
+                    gainValuesIterator+=1
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)
         wav_file = io.BytesIO()
         sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
         wav_file.seek(0)
         return send_file(wav_file, mimetype='audio/wav')
+
+
+    # def process_uniform_audio(self, sliderValues, mode):
+    #     gainValues = np.array(json.loads(sliderValues))
+    #     gainValues = [int(val) for val in gainValues]
+    #     mode = np.array(json.loads(mode))
+    #     mode = [int(val) for val in mode]
+
+    #     if mode[0] == 1:
+    #         frequency_bands = self.uniformFrequencyBands
+    #     elif mode[1] == 1:
+    #         frequency_bands = self.vowelFrequencyBands
+    #     else:
+    #         return None
+
+    #     processed_signal = np.zeros_like(self.audio_data)
+    #     for i, band in enumerate(frequency_bands):
+    #         sos = scipy.signal.butter(10, [band[0], band[1]], btype='band', fs=self.sample_rate, output='sos')
+    #         filtered_signal = scipy.signal.sosfilt(sos, self.audio_data)
+    #         processed_signal += filtered_signal * gainValues[i]
+
+    #     wav_file = io.BytesIO()
+    #     sf.write(wav_file, processed_signal, self.sample_rate, format='WAV')
+    #     wav_file.seek(0)
+    #     return send_file(wav_file, mimetype='audio/wav')
+
 
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
@@ -80,5 +122,5 @@ class AudioProcessor:
         return self.plot_spectrogram(self.audio_data,self.sample_rate)
 
     def output_spectrogram(self,audio_file):
-        audio_data, sr = librosa.load(audio_file, sr=None)
-        return self.plot_spectrogram(audio_data,sr)
+        audioData, sampleRate = librosa.load(audio_file, sr=None)
+        return self.plot_spectrogram(audioData,sampleRate)

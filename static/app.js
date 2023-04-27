@@ -15,6 +15,7 @@ const outputAudio = document.getElementById("outputaudio");
 let file;
 let plotted=false;
 let signals=[]
+let modeBool = [0, 0, 0, 0];
 //--------------------------------------EVENT LISTENERS---------------------------------------------
 
 document.querySelectorAll(".slider").forEach((slider)=>{
@@ -43,7 +44,7 @@ window.addEventListener("load", function () {
 document
   .getElementById("formFile")
   .addEventListener("change", async (event) => {
-    let file = event.target.files[0];
+    file = event.target.files[0];
     const fileType = file.type;
 
     if (fileType != "text/csv") {
@@ -216,25 +217,39 @@ function updateSliders(selectedIndex) {
   });
 }
 
-function getSliderValues(){
+  function getSliderValues(){
   let sliderValues = [];
   selectedModeIndex = document.getElementById("mode-select").selectedIndex;
   if (selectedModeIndex === 1) {
     document.querySelectorAll(".uniformmode").forEach((slider) => {
       sliderValues.push(slider.value);
+      modeBool[0]=1;
     });
   } else if (selectedModeIndex === 2) {
     document.querySelectorAll(".vowels").forEach((slider) => {
       sliderValues.push(slider.value);
+      modeBool[1] = 1;
+    });
+  } else if (selectedModeIndex === 3) {
+    document.querySelectorAll(".music").forEach((slider) => {
+      sliderValues.push(slider.value);
+      modeBool[2] = 1;
+    });
+    } else if (selectedModeIndex === 4) {
+    document.querySelectorAll(".abnormalities").forEach((slider) => {
+      sliderValues.push(slider.value);
+      modeBool[3] = 1;
     });
   }
   return sliderValues;
-}
+}  
 
 function handleSliderChange() {
   sliderValues = getSliderValues();
   var formData = new FormData();
+  formData.append("file",file);
   formData.append("sliderValues", JSON.stringify(sliderValues));
+  formData.append("mode", JSON.stringify(modeBool));
   fetch("/audioProcessing", {
     method: "POST",
     body: formData,

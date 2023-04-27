@@ -16,8 +16,10 @@ def readAudio():
 
 @app.route('/audioProcessing',methods=['POST'])
 def rangeEqualizer():
+    file=request.files['file']
+    mode= request.form['mode']
     sliderValues = request.form['sliderValues']
-    return audio_processor.process_uniform_audio(sliderValues)
+    return audio_processor.process_uniform_audio(file,sliderValues,mode)
 
 @app.route('/inputSpectrogram',methods=['GET'])
 def inputspectrogram():
