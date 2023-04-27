@@ -55,9 +55,8 @@ document.getElementById("formFile").addEventListener("change", async (event) => 
     readAudioFile(formData);
   }
   else{
- // Create a new file reader instance
+ 
  const reader = new FileReader();
- // Read the file as text
  reader.readAsText(file);
  let data;
  // Trigger this function when the file is loaded
@@ -70,6 +69,7 @@ document.getElementById("formFile").addEventListener("change", async (event) => 
        // Split each row by comma and convert the values to numbers
        const [col1, col2] = row.split(",");
        return { col1: parseFloat(col1), col2: parseFloat(col2) };
+       
      });
    // Convert the CSV data to a trace and update the graph
    console.log(data);
@@ -271,6 +271,25 @@ function processUniformAudio(file){
       });
 }
 
+function processArrythmia(file){
+  var formData = new FormData();
+    formData.append("csvFile", file);
+    fetch("/detectArrhythmia",{
+      method: "POST",
+      body: formData,
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      let arrythmiaArray = result.arrythmiaData;
+      let time=[];
+      sampleRate = result.sampleRate;
+      for (let index = 0; index < arrythmiaArray.length; index++) {
+        time.push(index / sampleRate);
+      }
+      Plotly.update(outputSignal, { x: [time], y: [arrythmiaArray] },{},0);
+    });
+}
+
 // Define function to update equalizer sliders based on selected mode
 function updateSliders(selectedIndex) {
   const sliderGroups = document.querySelectorAll(".slider-group");
@@ -293,6 +312,10 @@ function getSliderValues(){
     });
   } else if (selectedModeIndex === 2) {
     document.querySelectorAll(".vowels").forEach((slider) => {
+      sliderValues.push(slider.value);
+    });
+  } else if (selectedModeIndex ===4){
+    document.querySelectorAll(".arrythmia").forEach((slider) => {
       sliderValues.push(slider.value);
     });
   }

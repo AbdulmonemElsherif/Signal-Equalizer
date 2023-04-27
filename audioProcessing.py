@@ -8,6 +8,7 @@ import base64
 import io
 import soundfile as sf
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class AudioProcessor:
@@ -17,6 +18,13 @@ class AudioProcessor:
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
         self.sample_rate=sr
+        
+    def set_arrythmia_data(self, csv_file, srr):
+        csv_data = pd.read_csv(csv_file)
+        arrythmia_data = csv_data['arrythmia_data'].tolist()
+        self.arrythmia_data = arrythmia_data
+        self.arrythmia_sample_rate = srr
+        
 
     def upload_audio(self, audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
@@ -55,6 +63,36 @@ class AudioProcessor:
         sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
         wav_file.seek(0)
         return send_file(wav_file, mimetype='audio/wav')
+    
+    def process_arrythmia(self, arrSliderValue, csv_file):
+        fft_arrData=self.perform_fft(self.arrythmia_data, self.arrythmia_sample_rate)
+        signal_fft_freq = fft_arrData['frequency']
+        magnitude = fft_arrData['magnitude']
+        phase = fft_arrData['phase']
+        arrgainValues = np.array(json.loads(arrSliderValue))
+        
+        csv_data = pd.read_csv(csv_file)
+        arrythmia_data = csv_data['arrythmia_data'].tolist()
+        arrythmia_sample_rate = csv_data['sample_rate'][0]
+        arrythmia_data_np = np.array(arrythmia_data)
+        
+        gainValues = np.array(json.loads(arrSliderValue))
+        gainValues = [int(val) for val in gainValues]
+        gainValuesIterator = 0
+        for band in self.frequencyBands:
+         indices = np.where((self.arrythmia_freq >= band[0]) & (self.arrythmia_freq <= band[1]))
+        for index in indices[0]:
+            arrythmia_data_np[index] *= gainValues[gainValuesIterator]
+        if gainValuesIterator < len(gainValues):
+            gainValuesIterator += 1
+        modified_signal = self.perform_ifft(arrythmia_data_np * np.exp(1j * phase))
+        time_domain_signal = np.real(modified_signal)
+        
+        df = pd.DataFrame(arrythmia_data_np)
+        df.to_csv('processed_arrythmia.csv', index=False)
+
+        return send_file('processed_arrythmia.csv', as_attachment=True)
+    
 
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
