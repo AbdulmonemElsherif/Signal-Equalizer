@@ -16,7 +16,7 @@ class AudioProcessor:
     def __init__(self):
         self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
         self.vowelFrequencyBands =  [[800,5000],[500,2000],[500,1200],[900,5000],[1200,5000]]
-        self.musicFrequencyBands=[[0,1000],[1000,2600],[2600,22049]]
+        self.musicFrequencyBands=[[0,500],[500,1200],[1200,7000]]
 
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
@@ -59,15 +59,14 @@ class AudioProcessor:
             frequencyBands=self.vowelFrequencyBands
         elif mode[2]==1:
             frequencyBands=self.musicFrequencyBands
-        for band in frequencyBands:
-                indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
-                for index in indices[0]:
-                    if gainValuesIterator == 0: # add condition here
-                        pass # do nothing
-                    else:
-                        magnitude[index] *= gainValues[gainValuesIterator]
-                if gainValuesIterator<len(gainValues):
-                    gainValuesIterator+=1
+        for gainValue in gainValues:
+            indices = np.where((signal_fft_freq >= frequencyBands[gainValuesIterator][0]) & (signal_fft_freq <= frequencyBands[gainValuesIterator][1]))
+            for index in indices[0]:
+                if gainValue >= 0:
+                    magnitude[index] *= gainValue
+                else:
+                    magnitude[index] = -magnitude[index]
+            gainValuesIterator += 1
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)
         wav_file = io.BytesIO()
