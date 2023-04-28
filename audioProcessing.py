@@ -73,31 +73,28 @@ class AudioProcessor:
         wav_file.seek(0)
         return send_file(wav_file, mimetype='audio/wav')
 
-
-    # def process_uniform_audio(self, sliderValues, mode):
-    #     gainValues = np.array(json.loads(sliderValues))
-    #     gainValues = [int(val) for val in gainValues]
-    #     mode = np.array(json.loads(mode))
-    #     mode = [int(val) for val in mode]
-
-    #     if mode[0] == 1:
-    #         frequency_bands = self.uniformFrequencyBands
-    #     elif mode[1] == 1:
-    #         frequency_bands = self.vowelFrequencyBands
-    #     else:
-    #         return None
-
-    #     processed_signal = np.zeros_like(self.audio_data)
-    #     for i, band in enumerate(frequency_bands):
-    #         sos = scipy.signal.butter(10, [band[0], band[1]], btype='band', fs=self.sample_rate, output='sos')
-    #         filtered_signal = scipy.signal.sosfilt(sos, self.audio_data)
-    #         processed_signal += filtered_signal * gainValues[i]
-
-    #     wav_file = io.BytesIO()
-    #     sf.write(wav_file, processed_signal, self.sample_rate, format='WAV')
-    #     wav_file.seek(0)
-    #     return send_file(wav_file, mimetype='audio/wav')
-
+    def getMaxFreq(self,audioData,sampleRate):
+        time = []
+        for index in range(len(audioData)):
+            time.append(index / sampleRate)
+        amplitude = audioData
+        # Calculate the time step between samples
+        timeStep = time[1] - time[0]
+        # Perform the FFT on the amplitude data
+        #phase/ array of complex numbers that represent the frequency components of the signal.
+        spectrum = np.fft.fft(amplitude) 
+        magnitudes = np.abs(spectrum)
+        # Calculate the sampling frequency
+        samplingFrequency = 1 / timeStep
+        # Calculate the Nyquist frequency
+        # nyquistFrequency = samplingFrequency / 2
+        # Find the index of the frequency component with the highest magnitude
+        fmaxIndex = np.argmax(magnitudes)
+        # Convert the index to a frequency value
+        # Converts the index of the maximum frequency component to a frequency value by multiplying it by the frequency resolution, which is the sampling frequency divided by the number of frequency bins in the FFT result.
+        fmax = fmaxIndex * (samplingFrequency / len(magnitudes))
+        # Return the frequency with the highest amplitude 
+        return {'fmax': fmax}
 
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
