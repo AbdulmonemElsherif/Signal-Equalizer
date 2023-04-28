@@ -16,7 +16,7 @@ class AudioProcessor:
     def __init__(self):
         self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
         self.vowelFrequencyBands =  [[4000,10000],[1200,5000],[490, 2800]]
-
+        self.musicFrequencyBands =[]
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
         self.sample_rate=sr
@@ -56,6 +56,8 @@ class AudioProcessor:
             frequencyBands=self.uniformFrequencyBands
         elif mode[1]==1:
             frequencyBands=self.vowelFrequencyBands
+        elif mode[2]==1:
+            frequencyBands=self.musicFrequencyBands
         for gainValue in gainValues:
             indices = np.where((signal_fft_freq >= frequencyBands[gainValuesIterator][0]) & (signal_fft_freq <= frequencyBands[gainValuesIterator][1]))
             for index in indices[0]:

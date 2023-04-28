@@ -7,23 +7,24 @@ const outputSpectrogram = document.getElementById("outputspectrogram");
 // Define variables for equalizer sliders
 let sliders;
 let sampleRate;
+let maxTime = 0;
 // Define variable for mode selector
 const equalizerContainer = document.getElementById("equalizer-container");
-const modeSelector = document.getElementById("mode-select");  
+const modeSelector = document.getElementById("mode-select");
 const inputAudio = document.getElementById("inputaudio");
 const outputAudio = document.getElementById("outputaudio");
 let file;
-let plotted=false;
-let signals=[]
+let plotted = false;
+let signals = [];
 let modeBool = [0, 0, 0, 0];
 //--------------------------------------EVENT LISTENERS---------------------------------------------
 
-document.querySelectorAll(".slider").forEach((slider)=>{
-  slider.addEventListener("change", handleSliderChange)
+document.querySelectorAll(".slider").forEach((slider) => {
+  slider.addEventListener("change", handleSliderChange);
 });
 
 // Add event listener to mode selector
-modeSelector.addEventListener("change", ()=>{
+modeSelector.addEventListener("change", () => {
   const selectedIndex = modeSelector.selectedIndex;
   updateSliders(selectedIndex);
 });
@@ -38,7 +39,7 @@ window.addEventListener("load", function () {
   //apply changes from second graph onto the first graph in case of zooming and panning
   outputSignal.on("plotly_relayout", () => {
     linking(outputSignal, inputSignal);
-  });  
+  });
 });
 
 document
@@ -78,7 +79,7 @@ document
     }
   });
 
-  document.querySelectorAll(".stopbutton").forEach((button, index) => {
+document.querySelectorAll(".stopbutton").forEach((button, index) => {
   button.addEventListener("click", () => {
     if (index === 0) {
       inputAudio.pause();
@@ -90,14 +91,20 @@ document
   });
 });
 
-document.querySelector("#spectrogram-toggle").addEventListener("change", (event) => {
-  document.querySelectorAll(".spectrogram").forEach((spectrogram) => {
-    if (event.target.checked) {
-      spectrogram.style.display = "block";
-    } else {
-      spectrogram.style.display = "none";
-    }
+document
+  .querySelector("#spectrogram-toggle")
+  .addEventListener("change", (event) => {
+    document.querySelectorAll(".spectrogram").forEach((spectrogram) => {
+      if (event.target.checked) {
+        spectrogram.style.display = "block";
+      } else {
+        spectrogram.style.display = "none";
+      }
+    });
   });
+
+graphElement.on("plotly_afterplot", function () {
+  checkBoundaries(graphElement);
 });
 
 // document.querySelectorAll(".audiofile").forEach((audio, index) => {
@@ -107,17 +114,16 @@ document.querySelector("#spectrogram-toggle").addEventListener("change", (event)
 //   });
 // });
 
- 
 //---------------------------------------FUNCTIONS----------------------------------------------------------
 
 function createPlot(graphElement) {
   let layout = {
     margin: {
       l: 50,
-      r: 50, 
-      b: 50, 
-      t: 50, 
-      pad: 5, 
+      r: 50,
+      b: 50,
+      t: 50,
+      pad: 5,
     },
     xaxis: {
       title: "Time (sec)",
@@ -125,15 +131,21 @@ function createPlot(graphElement) {
     },
     yaxis: {
       title: "Amplitude",
+      fixedrange: true,
     },
+    dragmode: false,
   };
-  Plotly.newPlot(graphElement, [], layout, {
-    displaylogo: false,
+  let config = {
     // Enable responsive sizing of the plot
     responsive: true,
     // Enable automatic resizing of the plot to fit its container element
     autosize: true,
-  });
+    //remove logo of plotly
+    displaylogo: false,
+    //remove unused buttons
+    modeBarButtonsToRemove: ["toImage", "zoom2d", "lasso2d", "pan2d"],
+  };
+  Plotly.newPlot(graphElement, [], layout, config);
 }
 
 function readAudioFile(formData) {
@@ -150,11 +162,13 @@ function readAudioFile(formData) {
         //get time from sampling frequency as  fs = 1/T
         time.push(index / sampleRate);
       }
+      // find the maximum time value in the audio file
+      maxTime = audioDataArray.length / sampleRate;
       document.querySelectorAll(".slider").forEach((slider) => {
         slider.value = 0;
       });
-      plotGraphs(time,audioDataArray);
- });
+      plotGraphs(time, audioDataArray);
+    });
   // // Add a vertical line trace for the cursor
   // // const max = Math.max(audioData);
   // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
@@ -162,6 +176,9 @@ function readAudioFile(formData) {
 }
 
 function plotGraphs(x, y) {
+  var config = {
+    dragmode: "pan",
+  };
   if (inputSignal.data.length === 0) {
     Plotly.addTraces(inputSignal, { x: x, y: y });
     Plotly.addTraces(outputSignal, { x: x, y: y });
@@ -171,6 +188,8 @@ function plotGraphs(x, y) {
     Plotly.addTraces(inputSignal, { x: x, y: y });
     Plotly.addTraces(outputSignal, { x: x, y: y });
   }
+  Plotly.update(inputSignal, {}, config);
+  Plotly.update(outputSignal, {}, config);
   plotInitialSpectrograms();
 }
 
@@ -184,24 +203,24 @@ function convertCsvToTrace(csvdata) {
   }
 }
 
-function processUniformAudio(file){
-    var formData = new FormData();
-    formData.append("audioFile", file);
-    fetch("/readAudioFile", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        let audioDataArray = result.audioData;
-        let time = [];
-        sampleRate = result.sampleRate;
-        for (let index = 0; index < audioDataArray.length; index++) {
-          //get time from sampling frequency as  fs = 1/T
-          time.push(index / sampleRate);
-        }
-        Plotly.update(outputSignal, { x: [time], y: [audioDataArray] },{},0);
-      });
+function processUniformAudio(file) {
+  var formData = new FormData();
+  formData.append("audioFile", file);
+  fetch("/readAudioFile", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      let audioDataArray = result.audioData;
+      let time = [];
+      sampleRate = result.sampleRate;
+      for (let index = 0; index < audioDataArray.length; index++) {
+        //get time from sampling frequency as  fs = 1/T
+        time.push(index / sampleRate);
+      }
+      Plotly.update(outputSignal, { x: [time], y: [audioDataArray] }, {}, 0);
+    });
 }
 
 // Define function to update equalizer sliders based on selected mode
@@ -217,13 +236,13 @@ function updateSliders(selectedIndex) {
   });
 }
 
-  function getSliderValues(){
+function getSliderValues() {
   let sliderValues = [];
   selectedModeIndex = document.getElementById("mode-select").selectedIndex;
   if (selectedModeIndex === 1) {
     document.querySelectorAll(".uniformmode").forEach((slider) => {
       sliderValues.push(slider.value);
-      modeBool[0]=1;
+      modeBool[0] = 1;
     });
   } else if (selectedModeIndex === 2) {
     document.querySelectorAll(".vowels").forEach((slider) => {
@@ -235,19 +254,19 @@ function updateSliders(selectedIndex) {
       sliderValues.push(slider.value);
       modeBool[2] = 1;
     });
-    } else if (selectedModeIndex === 4) {
+  } else if (selectedModeIndex === 4) {
     document.querySelectorAll(".abnormalities").forEach((slider) => {
       sliderValues.push(slider.value);
       modeBool[3] = 1;
     });
   }
   return sliderValues;
-}  
+}
 
 function handleSliderChange() {
   sliderValues = getSliderValues();
   var formData = new FormData();
-  formData.append("file",file);
+  formData.append("file", file);
   formData.append("sliderValues", JSON.stringify(sliderValues));
   formData.append("mode", JSON.stringify(modeBool));
   fetch("/audioProcessing", {
@@ -262,65 +281,57 @@ function handleSliderChange() {
     });
 }
 
-function spectrogramSliderChange(outputfile){
+function spectrogramSliderChange(outputfile) {
   var formData = new FormData();
   formData.append("outputFile", outputfile);
-   fetch("/outputSpectrogram", {
-     method: "POST",
-     body: formData,
-   })
-     .then((response) => response.json())
-     .then((result) => {
-       const outputSpectrogram=document.getElementById("outputspectrogram");
-        outputSpectrogram.src = "data:image/png;base64," + result.image;
-     });
-}
-
-function plotInitialSpectrograms(){
-  fetch("/inputSpectrogram", {
+  fetch("/outputSpectrogram", {
+    method: "POST",
+    body: formData,
   })
     .then((response) => response.json())
     .then((result) => {
+      const outputSpectrogram = document.getElementById("outputspectrogram");
+      outputSpectrogram.src = "data:image/png;base64," + result.image;
+    });
+}
+
+function plotInitialSpectrograms() {
+  fetch("/inputSpectrogram", {})
+    .then((response) => response.json())
+    .then((result) => {
       // Set the image data as the source of the image element
-      document.querySelectorAll(".spectrogram").forEach((spectrogram)=>{
+      document.querySelectorAll(".spectrogram").forEach((spectrogram) => {
         spectrogram.src = "data:image/png;base64," + result.image;
       });
     });
 }
 
-  //linking function
+//linking function
 function linking(firstGraph, secondGraph) {
-    var xaxis = firstGraph.layout.xaxis;
-    var yaxis = firstGraph.layout.yaxis;
-    var update = {
-      xaxis: {
-        range: [xaxis.range[0], xaxis.range[1]],
-      },
-      yaxis: {
-        range: [yaxis.range[0], yaxis.range[1]],
-      },
-    };
-Plotly.update(secondGraph, {}, update);
+  var xaxis = firstGraph.layout.xaxis;
+  var yaxis = firstGraph.layout.yaxis;
+  var update = {
+    xaxis: {
+      range: [xaxis.range[0], xaxis.range[1]],
+    },
+    yaxis: {
+      range: [yaxis.range[0], yaxis.range[1]],
+    },
+  };
+  Plotly.update(secondGraph, {}, update);
 }
 
-function checkBoundaries(graphElement){
+function checkBoundaries(graphElement) {
   let xaxis = graphElement.layout.xaxis;
-  let yaxis = graphElement.layout.yaxis;
-  const validXRange = [graphElement.data[0].x[0], graphElement.data[0].x.slice(-1)[0]];
-  const validYRange= [graphElement.data[0].y[0], graphElement.data[0].y.slice(-1)[0]];
+  const validXRange = [0, maxTime];
   if (xaxis.range[0] < validXRange[0] || xaxis.range[1] > validXRange[1]) {
     // Reset the x-axis range to the valid range
-    Plotly.relayout(graphElement, {xaxis: {
+    Plotly.relayout(graphElement, {
+      xaxis: {
         range: [validXRange[0], validXRange[1]],
       },
-    },0);
-    }
-  if (yaxis.range[0] < validYRange[0] || yaxis.range[1] > validYRange[1]) {
-      // Reset the x-axis range to the valid range
-      Plotly.relayout(graphElement, {  yaxis: {
-        range: [validYRange[0], yaxis.range[1]],
-      },},0);
-    }
+    });
+  }
 }
 // // Add an event listener to the audio element to update the cursor position during playback
 // function updateCursor(currentTime, index) {
