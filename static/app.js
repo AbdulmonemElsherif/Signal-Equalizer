@@ -7,6 +7,7 @@ const outputSpectrogram = document.getElementById("outputspectrogram");
 // Define variables for equalizer sliders
 let sliders;
 let sampleRate;
+let maxTime=0;
 // Define variable for mode selector
 const equalizerContainer = document.getElementById("equalizer-container");
 const modeSelector = document.getElementById("mode-select");  
@@ -100,6 +101,12 @@ document.querySelector("#spectrogram-toggle").addEventListener("change", (event)
   });
 });
 
+graphElement.on('plotly_afterplot', function() {
+  checkBoundaries(graphElement);
+});
+
+
+
 // document.querySelectorAll(".audiofile").forEach((audio, index) => {
 //   audio.addEventListener("timeupdate", (event) => {
 //     const currentTime = event.target.currentTime;
@@ -156,6 +163,8 @@ function readAudioFile(formData) {
         //get time from sampling frequency as  fs = 1/T
         time.push(index / sampleRate);
       }
+      // find the maximum time value in the audio file
+      maxTime = audioDataArray.length / sampleRate;
       document.querySelectorAll(".slider").forEach((slider) => {
         slider.value = 0;
       });
@@ -317,21 +326,13 @@ Plotly.update(secondGraph, {}, update);
 
 function checkBoundaries(graphElement){
   let xaxis = graphElement.layout.xaxis;
-  let yaxis = graphElement.layout.yaxis;
-  const validXRange = [graphElement.data[0].x[0], graphElement.data[0].x.slice(-1)[0]];
-  const validYRange= [graphElement.data[0].y[0], graphElement.data[0].y.slice(-1)[0]];
+  const validXRange = [0, maxTime];
   if (xaxis.range[0] < validXRange[0] || xaxis.range[1] > validXRange[1]) {
     // Reset the x-axis range to the valid range
     Plotly.relayout(graphElement, {xaxis: {
         range: [validXRange[0], validXRange[1]],
       },
-    },0);
-    }
-  if (yaxis.range[0] < validYRange[0] || yaxis.range[1] > validYRange[1]) {
-      // Reset the x-axis range to the valid range
-      Plotly.relayout(graphElement, {  yaxis: {
-        range: [validYRange[0], yaxis.range[1]],
-      },},0);
+    });
     }
 }
 // // Add an event listener to the audio element to update the cursor position during playback
