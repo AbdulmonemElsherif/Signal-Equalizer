@@ -126,14 +126,19 @@ function createPlot(graphElement) {
     yaxis: {
       title: "Amplitude",
     },
+    dragmode:false,
   };
-  Plotly.newPlot(graphElement, [], layout, {
+  let config = {
+     // Enable responsive sizing of the plot
+     responsive: true,
+     // Enable automatic resizing of the plot to fit its container element
+     autosize: true,
+    //remove logo of plotly
     displaylogo: false,
-    // Enable responsive sizing of the plot
-    responsive: true,
-    // Enable automatic resizing of the plot to fit its container element
-    autosize: true,
-  });
+    //remove unused buttons
+    modeBarButtonsToRemove: ["toImage", "zoom2d", "lasso2d","pan2d"],
+  };
+  Plotly.newPlot(graphElement, [], layout, config);
 }
 
 function readAudioFile(formData) {
@@ -162,6 +167,9 @@ function readAudioFile(formData) {
 }
 
 function plotGraphs(x, y) {
+  var config = {
+    dragmode: 'pan'
+  };
   if (inputSignal.data.length === 0) {
     Plotly.addTraces(inputSignal, { x: x, y: y });
     Plotly.addTraces(outputSignal, { x: x, y: y });
@@ -171,8 +179,11 @@ function plotGraphs(x, y) {
     Plotly.addTraces(inputSignal, { x: x, y: y });
     Plotly.addTraces(outputSignal, { x: x, y: y });
   }
+  Plotly.update(inputSignal, {}, config);
+  Plotly.update(outputSignal, {}, config);
   plotInitialSpectrograms();
 }
+
 
 function convertCsvToTrace(csvdata) {
   let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
