@@ -18,6 +18,21 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/plotly-2.18.2.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="/static/style.css">
+    <script>document.addEventListener('DOMContentLoaded', function() {
+        const sliders = document.querySelectorAll('.uniformmode.slider');
+      
+        sliders.forEach(slider => {
+          const valueDisplay = document.createElement('span');
+          valueDisplay.classList.add('slider-value');
+          valueDisplay.textContent = slider.value;
+          slider.parentElement.appendChild(valueDisplay);
+      
+          slider.addEventListener('input', function() {
+            valueDisplay.textContent = this.value;
+          });
+        });
+      });
+      </script>
 
 </head>
 <body>
