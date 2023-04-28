@@ -73,29 +73,6 @@ class AudioProcessor:
         wav_file.seek(0)
         return send_file(wav_file, mimetype='audio/wav')
 
-    def getMaxFreq(self,audioData,sampleRate):
-        time = []
-        for index in range(len(audioData)):
-            time.append(index / sampleRate)
-        amplitude = audioData
-        # Calculate the time step between samples
-        timeStep = time[1] - time[0]
-        # Perform the FFT on the amplitude data
-        #phase/ array of complex numbers that represent the frequency components of the signal.
-        spectrum = np.fft.fft(amplitude) 
-        magnitudes = np.abs(spectrum)
-        # Calculate the sampling frequency
-        samplingFrequency = 1 / timeStep
-        # Calculate the Nyquist frequency
-        # nyquistFrequency = samplingFrequency / 2
-        # Find the index of the frequency component with the highest magnitude
-        fmaxIndex = np.argmax(magnitudes)
-        # Convert the index to a frequency value
-        # Converts the index of the maximum frequency component to a frequency value by multiplying it by the frequency resolution, which is the sampling frequency divided by the number of frequency bins in the FFT result.
-        fmax = fmaxIndex * (samplingFrequency / len(magnitudes))
-        # Return the frequency with the highest amplitude 
-        return {'fmax': fmax}
-
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
         hop_length = 512
