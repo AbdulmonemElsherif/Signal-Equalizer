@@ -8,6 +8,7 @@ import base64
 import io
 import soundfile as sf
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import spectrogram
 import pandas as pd
 import csv
 
@@ -22,6 +23,7 @@ class AudioProcessor:
     def read_arrythmia_data(self, csv_file):
         csv_data = pd.read_csv(csv_file)
         arrythmia_data = csv_data.iloc[:, 1].values
+        print(arrythmia_data)
         return {"arrythmia_data":arrythmia_data}
       
         
@@ -90,7 +92,7 @@ class AudioProcessor:
 
         return send_file('processed_arrythmia.csv',mimetype='text/csv' ,as_attachment=True)
     
-
+  
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
         hop_length = 512
@@ -117,8 +119,41 @@ class AudioProcessor:
     def output_spectrogram(self,audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
         return self.plot_spectrogram(audio_data,sr)
-    
-    
-        
             
-        
+            
+    def plot_spectrogram_from_csv(self,csv_file):
+      data = self.read_arrythmia_data(csv_file)
+      signal = data['Signal']
+      fs = data['Fs']
+    
+      # Set parameters for spectrogram
+      nperseg = 1024
+      noverlap = int(nperseg / 2)
+    
+      # Compute spectrogram
+      f, t, Sxx = spectrogram(signal, fs=fs, nperseg=nperseg, noverlap=noverlap)
+    
+      # Plot spectrogram
+      plt.pcolormesh(t, f, np.log10(Sxx))
+      plt.ylabel('Frequency [Hz]')
+      plt.xlabel('Time [sec]')
+      plt.colorbar()
+      plt.show() 
+       # Save the plot as an image
+      buf = io.BytesIO()
+      plt.savefig(buf, format='png')
+      buf.seek(0)
+      data = base64.b64encode(buf.read()).decode('ascii')
+        # Return the image data as JSON
+      return jsonify ({'image': data})
+    
+    def input_Arrythmiaspectrogram(self,file):
+            output=self.read_arrythmia_data(file)
+            arrythmiaData=output["arrythmia_data"]
+            return self.plot_spectrogram(arrythmiaData,360)
+    
+    def output_Arrythmiaspectrogram(self,file):
+            output=self.read_arrythmia_data(file)
+            arrythmiaData=output["arrythmia_data"]
+            arrythmiaData = arrythmiaData.reshape(1, -1)
+            return self.plot_spectrogram(arrythmiaData,360)
