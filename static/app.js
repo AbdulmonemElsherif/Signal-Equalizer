@@ -33,12 +33,14 @@ window.addEventListener("load", function () {
   createPlot(inputSignal);
   createPlot(outputSignal);
   //apply changes from first graph onto the second graph in case of zooming and panning
-  inputSignal.on("plotly_relayout", () => {
+  inputSignal.on("plotly_relayout", (eventData) => {
     linking(inputSignal, outputSignal);
+    checkBoundaries(inputSignal,eventData);
   });
   //apply changes from second graph onto the first graph in case of zooming and panning
-  outputSignal.on("plotly_relayout", () => {
+  outputSignal.on("plotly_relayout", (eventData) => {
     linking(outputSignal, inputSignal);
+    checkBoundaries(outputSignal,eventData);
   });
 });
 
@@ -103,17 +105,6 @@ document
     });
   });
 
-graphElement.on("plotly_afterplot", function () {
-  checkBoundaries(graphElement);
-});
-
-// document.querySelectorAll(".audiofile").forEach((audio, index) => {
-//   audio.addEventListener("timeupdate", (event) => {
-//     const currentTime = event.target.currentTime;
-//     updateCursor(currentTime, index);
-//   });
-// });
-
 //---------------------------------------FUNCTIONS----------------------------------------------------------
 
 function createPlot(graphElement) {
@@ -169,10 +160,6 @@ function readAudioFile(formData) {
       });
       plotGraphs(time, audioDataArray);
     });
-  // // Add a vertical line trace for the cursor
-  // // const max = Math.max(audioData);
-  // Plotly.addTraces(inputSignal, { x: [0, 0], y: [-0.5, 0.5] });
-  // Plotly.addTraces(outputSignal, { x: [0, 0], y: [-0.5, 0.5] });
 }
 
 function plotGraphs(x, y) {
@@ -199,14 +186,13 @@ function convertCsvToTrace(csvdata) {
   let uploadedSignal = { x: x, y: y };
   if (signals.length == 0) {
     signals.push(uploadedSignal);
-    // Plotly.addTraces(inputSignal, uploadedSignal);
   }else{
   signals.pop();
   signals.push(uploadedSignal);
 }
 }
 
-function processUniformAudio(file) {
+function processAudio(file) {
   var formData = new FormData();
   formData.append("audioFile", file);
   fetch("/readAudioFile", {
@@ -223,6 +209,7 @@ function processUniformAudio(file) {
         time.push(index / sampleRate);
       }
       Plotly.update(outputSignal, { x: [time], y: [audioDataArray] }, {}, 0);
+      maxTime=time[time.length-1]
     });
 }
 
@@ -299,7 +286,7 @@ function handleSliderChange() {
       .then((result) => {
         spectrogramSliderChange(result);
         outputAudio.src = URL.createObjectURL(result);
-        processUniformAudio(result);
+        processAudio(result);
       });
   }
 }
@@ -349,32 +336,17 @@ function linking(firstGraph, secondGraph) {
   Plotly.update(secondGraph, {}, update);
 }
 
-function checkBoundaries(graphElement) {
-  let xaxis = graphElement.layout.xaxis;
-  const validXRange = [0, maxTime];
-  if (xaxis.range[0] < validXRange[0] || xaxis.range[1] > validXRange[1]) {
-    // Reset the x-axis range to the valid range
-    Plotly.relayout(graphElement, {
-      xaxis: {
-        range: [validXRange[0], validXRange[1]],
-      },
-    });
+function checkBoundaries(graphElement,eventData) {
+  if (maxTime) {
+    var xMin = eventData["xaxis.range[0]"];
+    var xMax = eventData["xaxis.range[1]"];
+    if (xMax > maxTime || xMin < 0) {
+      Plotly.relayout(graphElement, {
+        xaxis: {
+          range: [0, maxTime],
+        },
+        yaxis: { fixedrange: true },
+      });
+    }
   }
 }
-// // Add an event listener to the audio element to update the cursor position during playback
-// function updateCursor(currentTime, index) {
-//   if (index === 0)
-//     Plotly.update(
-//       inputSignal,
-//       { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
-//       {},
-//       [1]
-//     );
-//   else
-//     Plotly.update(
-//       inputSignal,
-//       { x: [[currentTime, currentTime]], y: [[-0.5, 0.5]] },
-//       {},
-//       [1]
-//     );
-// }
