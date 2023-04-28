@@ -117,3 +117,8 @@ class AudioProcessor:
     def output_spectrogram(self,audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
         return self.plot_spectrogram(audio_data,sr)
+    
+    
+        
+            
+        
