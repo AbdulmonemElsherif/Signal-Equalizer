@@ -200,7 +200,10 @@ function convertCsvToTrace(csvdata) {
   if (signals.length == 0) {
     signals.push(uploadedSignal);
     // Plotly.addTraces(inputSignal, uploadedSignal);
-  }
+  }else{
+  signals.pop();
+  signals.push(uploadedSignal);
+}
 }
 
 function processUniformAudio(file) {
@@ -255,7 +258,7 @@ function getSliderValues() {
       modeBool[2] = 1;
     });
   } else if (selectedModeIndex === 4) {
-    document.querySelectorAll(".abnormalities").forEach((slider) => {
+    document.querySelectorAll(".arrythmia").forEach((slider) => {
       sliderValues.push(slider.value);
       modeBool[3] = 1;
     });
@@ -269,16 +272,36 @@ function handleSliderChange() {
   formData.append("file", file);
   formData.append("sliderValues", JSON.stringify(sliderValues));
   formData.append("mode", JSON.stringify(modeBool));
-  fetch("/audioProcessing", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.blob())
-    .then((result) => {
-      spectrogramSliderChange(result);
-      outputAudio.src = URL.createObjectURL(result);
-      processUniformAudio(result);
-    });
+  // selectedModeIndex = document.getElementById("mode-select").selectedIndex;
+  if (file.name.endsWith(".csv")) {
+    // formData.append("y", inputSignal.data[0].y);
+    fetch("/detectArrhythmia", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.blob())
+      .then((result) => {
+        spectrogramSliderChange(result);
+        const reader = new FileReader();
+        reader.onload = () => {
+          const csvdata = reader.result;
+          const arrdata = csvdata.split("\n").map(parseFloat);
+          Plotly.update(outputSignal, { y: [arrdata] }, {}, 0);
+        };
+        reader.readAsText(result);
+      });
+  } else {
+    fetch("/audioProcessing", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.blob())
+      .then((result) => {
+        spectrogramSliderChange(result);
+        outputAudio.src = URL.createObjectURL(result);
+        processUniformAudio(result);
+      });
+  }
 }
 
 function spectrogramSliderChange(outputfile) {
@@ -296,7 +319,12 @@ function spectrogramSliderChange(outputfile) {
 }
 
 function plotInitialSpectrograms() {
-  fetch("/inputSpectrogram", {})
+  var formData = new FormData();
+  formData.append("file", file);
+  fetch("/inputSpectrogram", {
+    method: "POST",
+    body: formData,
+  })
     .then((response) => response.json())
     .then((result) => {
       // Set the image data as the source of the image element

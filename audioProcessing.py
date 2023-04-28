@@ -9,21 +9,27 @@ import io
 import soundfile as sf
 import matplotlib.pyplot as plt
 import scipy.signal
-
-
+import pandas as pd
 
 class AudioProcessor:
     def __init__(self):
         self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
         self.vowelFrequencyBands =  [[4000,10000],[1200,5000],[490, 2800]]
-        self.musicFrequencyBands =[]
-    def set_audio_data(self, audioData, sr):
-        self.audio_data=audioData
-        self.sample_rate=sr
+        self.musicFrequencyBands=[[0,500],[500,1200],[1200,7000]]
+        self.arrythmiaFrequencyBand=[[59,60]]
+
+    # def set_audio_data(self, audioData, sr):
+    #     self.audio_data=audioData
+    #     self.sample_rate=sr
+
+    def read_arrythmia_data(self, csv_file):
+        csv_data = pd.read_csv(csv_file)
+        arrythmia_data = csv_data.iloc[:, 1].values
+        return {"arrythmia_data":arrythmia_data}
 
     def upload_audio(self, audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
-        self.set_audio_data(audio_data,sr)
+        # self.set_audio_data(audio_data,sr)
         return {'audioData':audio_data.tolist(),'sampleRate':sr}
 
     def perform_fft(self, audioData, sr):
@@ -38,7 +44,7 @@ class AudioProcessor:
         modified_signal = np.fft.ifft(fft)
         return modified_signal
 
-    def process_uniform_audio(self,file,sliderValues,mode):
+    def process_audio(self,file,sliderValues,mode):
         output = self.upload_audio(file)
         audio_data = output['audioData']
         sample_rate = output['sampleRate']
@@ -69,9 +75,32 @@ class AudioProcessor:
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)
         wav_file = io.BytesIO()
-        sf.write(wav_file, time_domain_signal, self.sample_rate, format='WAV')
+        sf.write(wav_file, time_domain_signal, sample_rate, format='WAV')
         wav_file.seek(0)
         return send_file(wav_file, mimetype='audio/wav')
+
+    def process_arrythmia(self, arrSliderValue, file):
+        readoutput=self.read_arrythmia_data(file)
+        arrythmia_data=readoutput["arrythmia_data"]
+        arrythmia_sample_rate=360;
+        fft_arrData=self.perform_fft(arrythmia_data,arrythmia_sample_rate)
+        signal_fft_freq = fft_arrData['frequency']
+        magnitude = fft_arrData['magnitude']
+        phase = fft_arrData['phase']
+        gainValues = np.array(json.loads(arrSliderValue))
+        gainValues = [int(val) for val in gainValues]
+        gainValuesIterator = 0
+        for band in self.arrythmiaFrequencyBand:
+            indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+            for index in indices[0]:
+                magnitude[index] *= gainValues[gainValuesIterator]
+            if gainValuesIterator < len(gainValues):
+                gainValuesIterator += 1
+        modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
+        time_domain_signal = np.real(modified_signal)
+        df = pd.DataFrame(time_domain_signal)
+        df.to_csv('processed_arrythmia.csv', index=False)
+        return send_file('processed_arrythmia.csv',mimetype='text/csv' ,as_attachment=True)
 
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
@@ -91,11 +120,24 @@ class AudioProcessor:
         buf.seek(0)
         data = base64.b64encode(buf.read()).decode('ascii')
         # Return the image data as JSON
-        return jsonify({'image': data})
+        return jsonify ({'image': data})
 
-    def input_spectrogram(self):
-        return self.plot_spectrogram(self.audio_data,self.sample_rate)
-
-    def output_spectrogram(self,audio_file):
-        audioData, sampleRate = librosa.load(audio_file, sr=None)
-        return self.plot_spectrogram(audioData,sampleRate)
+    def input_spectrogram(self,file):
+        if file.filename.endswith('.csv'):
+            output=self.read_arrythmia_data(file)
+            arrythmiaData=output["arrythmia_data"]
+            return self.plot_spectrogram(arrythmiaData,360)
+        else:
+            audioData, sampleRate = librosa.load(file, sr=None)
+            return self.plot_spectrogram(audioData,sampleRate)
+    
+    def output_spectrogram(self,file):
+        if file.filename.endswith('.csv'):
+            output=self.read_arrythmia_data(file)
+            arrythmiaData=output["arrythmia_data"]
+            print(arrythmiaData)
+            arrythmiaData = arrythmiaData.reshape(1, -1)
+            return self.plot_spectrogram(arrythmiaData,360)
+        else:
+            audioData, sampleRate = librosa.load(file, sr=None)
+            return self.plot_spectrogram(audioData,sampleRate)
