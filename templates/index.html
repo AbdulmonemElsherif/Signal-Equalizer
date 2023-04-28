@@ -19,25 +19,32 @@
     <script src="/static/plotly-2.18.2.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="/static/style.css">
     <script>document.addEventListener('DOMContentLoaded', function() {
-        const sliders = document.querySelectorAll('.uniformmode.slider');
+        const sliders = document.querySelectorAll('.form-control-range');
       
         sliders.forEach(slider => {
+          const formGroup = slider.parentElement;
           const valueDisplay = document.createElement('span');
           valueDisplay.classList.add('slider-value');
           valueDisplay.textContent = slider.value;
-          slider.parentElement.appendChild(valueDisplay);
+          formGroup.appendChild(valueDisplay);
       
           slider.addEventListener('input', function() {
             valueDisplay.textContent = this.value;
           });
         });
       });
+      
       </script>
 
 </head>
 <body>
-    <div class="d-flex ">
-    <div class="flex-column p-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Signal Equalizer</h1>
+            </div>
+        </div>
+    <div class="container">
         <div class="mb-3">
             <input class="form-control" type="file" id="formFile">
         </div>
@@ -180,10 +187,7 @@
     </div>
     <div class="flex-column w-100 px-3">
     <!-- <header> -->
-        <div class="bg-dark">
-            <h3 class=" text-light p-3 ">Signal Equalizer</h3>
-            
-        </div>
+        
     <!-- </header> -->
             <div class="row">
                 <div class="col-md-6">
