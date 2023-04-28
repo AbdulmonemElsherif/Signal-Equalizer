@@ -332,7 +332,6 @@ function handleSliderChange() {
   formData.append("sliderValues", JSON.stringify(sliderValues));
   formData.append("file",file);
   selectedModeIndex = document.getElementById("mode-select").selectedIndex;
-  console.log(selectedModeIndex);
   if (selectedModeIndex ===4)
   {
     formData.append("y", inputSignal.data[0].y);
@@ -347,13 +346,14 @@ function handleSliderChange() {
       const reader = new FileReader();
       reader.onload = () => {
         const csvdata = reader.result;
-        const arrdata = csvdata.split("\n").map((row) => row.split(","));
-        convertCsvToTrace(csvdata);
+        const arrdata = csvdata.split("\n").map(parseFloat);
+        // convertCsvToTrace(csvdata);
+      Plotly.update(outputSignal, { y: [arrdata] }, {}, 0);
+
       };
       reader.readAsText(result);
       // console.log(result);
       // convertCsvToTrace(result)
-      Plotly.update(outputSignal,{x:[signals[0].x],y:[signals[0].y]},{},0)
     });
 }
  else{

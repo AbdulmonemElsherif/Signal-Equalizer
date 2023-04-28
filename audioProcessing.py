@@ -14,14 +14,14 @@ import csv
 class AudioProcessor:
     def __init__(self):
         self.frequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
-
+        self.arrythmiaFrequencyBand=[[200,300]]
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
         self.sample_rate=sr
         
     def read_arrythmia_data(self, csv_file):
         csv_data = pd.read_csv(csv_file)
-        arrythmia_data = csv_data['amplitude'].values
+        arrythmia_data = csv_data.iloc[:, 1].values
         return {"arrythmia_data":arrythmia_data}
       
         
@@ -50,12 +50,14 @@ class AudioProcessor:
         gainValues = np.array(json.loads(sliderValues))
         gainValues = [int(val) for val in gainValues]
         gainValuesIterator=0
-        for band in self.frequencyBands:
-            indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
+        for gainValue in gainValues:
+            indices = np.where((signal_fft_freq >= self.arrythmiaFrequencyBand[gainValuesIterator][0]) & (signal_fft_freq <= self.arrythmiaFrequencyBand[gainValuesIterator][1]))
             for index in indices[0]:
-                magnitude[index] *= gainValues[gainValuesIterator]
-            if gainValuesIterator<len(gainValues):
-                gainValuesIterator+=1
+                if gainValue >= 0:
+                    magnitude[index] *= gainValue
+                else:
+                    magnitude[index] =-magnitude[index]
+            gainValuesIterator += 1
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)
         wav_file = io.BytesIO()
@@ -67,7 +69,6 @@ class AudioProcessor:
         readoutput=self.read_arrythmia_data(file)
         arrythmia_data=readoutput["arrythmia_data"]
         arrythmia_sample_rate=360;
-        
         fft_arrData=self.perform_fft(arrythmia_data,arrythmia_sample_rate)
         signal_fft_freq = fft_arrData['frequency']
         magnitude = fft_arrData['magnitude']
@@ -76,7 +77,7 @@ class AudioProcessor:
         gainValues = np.array(json.loads(arrSliderValue))
         gainValues = [int(val) for val in gainValues]
         gainValuesIterator = 0
-        for band in self.frequencyBands:
+        for band in self.arrythmiaFrequencyBand:
             indices = np.where((signal_fft_freq >= band[0]) & (signal_fft_freq <= band[1]))
             for index in indices[0]:
                 magnitude[index] *= gainValues[gainValuesIterator]
@@ -84,7 +85,6 @@ class AudioProcessor:
                 gainValuesIterator += 1
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)
-        print(time_domain_signal)
         df = pd.DataFrame(time_domain_signal)
         df.to_csv('processed_arrythmia.csv', index=False)
 
