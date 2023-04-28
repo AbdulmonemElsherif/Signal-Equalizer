@@ -14,8 +14,8 @@ import csv
 class AudioProcessor:
     def __init__(self):
         self.frequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
-        self.arrythmiaFrequencyBand=[[50,57]]
-        self.arrythmiaTimeBand=[[0.4, 0.5]]
+        self.arrythmiaFrequencyBand=[[59,60]]
+        self.arrythmiaTimeBand=[ [0.4, 0.5]]
         
     def set_audio_data(self, audioData, sr):
         self.audio_data=audioData
@@ -129,3 +129,7 @@ class AudioProcessor:
     def output_spectrogram(self,audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
         return self.plot_spectrogram(audio_data,sr)
+    
+    def plot_ArrythmiaSpectrogram(self,csv_file, sample_rate):
+        
+    

@@ -348,6 +348,8 @@ function handleSliderChange() {
         const csvdata = reader.result;
         const arrdata = csvdata.split("\n").map(parseFloat);
         // convertCsvToTrace(csvdata);
+        console.log(arrdata)
+        
       Plotly.update(outputSignal, { y: [arrdata] }, {}, 0);
 
       };
