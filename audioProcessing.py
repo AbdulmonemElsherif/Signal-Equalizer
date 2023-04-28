@@ -21,10 +21,7 @@ class AudioProcessor:
         self.vowelFrequencyBands =  [[4000,10000],[1200,5000],[490, 2800]]
         self.musicFrequencyBands=[[0,500],[500,1200],[1200,7000]]
         self.arrythmiaFrequencyBand=[[0,25]]#[100,130],
-
-    # def set_audio_data(self, audioData, sr):
-    #     self.audio_data=audioData
-    #     self.sample_rate=sr
+        self.fmax=0
 
     def read_arrythmia_data(self, csv_file):
         csv_data = pd.read_csv(csv_file)
@@ -34,7 +31,6 @@ class AudioProcessor:
 
     def upload_audio(self, audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
-        # self.set_audio_data(audio_data,sr)
         return {'audioData':audio_data.tolist(),'sampleRate':sr}
 
     def perform_fft(self, audioData, sr):
@@ -111,14 +107,14 @@ class AudioProcessor:
 
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
-        hop_length = 512
+        hop_length = 1000
         n_fft = 2048
         spectrogram = librosa.feature.melspectrogram(y=audio_data, sr=sample_rate, n_fft=n_fft, hop_length=hop_length)
         # Convert the spectrogram to decibels
         spectrogram = librosa.power_to_db(spectrogram, ref=np.max)
         # Plot the spectrogram
         plt.figure(figsize=(10, 4))
-        librosa.display.specshow(spectrogram, y_axis='mel', fmax=8000, x_axis='time')
+        librosa.display.specshow(spectrogram, y_axis='mel', fmax=20000, x_axis='time')
         plt.colorbar(format='%+2.0f dB')
         plt.tight_layout()
         # Save the plot as an image
@@ -137,7 +133,8 @@ class AudioProcessor:
             return self.plot_spectrogram(audioData,sampleRate)
     
     def output_spectrogram(self,file):
-        if file.filename.endswith('.csv'):
+        filetype = file.mimetype
+        if filetype == 'text/csv':
             return self.csv_spectrogram(file)
         else:
             audioData, sampleRate = librosa.load(file, sr=None)
@@ -147,12 +144,11 @@ class AudioProcessor:
         # Read in the CSV file
         output=self.read_arrythmia_data(file)
         arrythmiaData=output["arrythmia_data"]
-        arrythmiaTime=output["arrythmia_time"]
         # Set up the STFT parameters
         fs = 360
-        window = 'hann'
-        nperseg = 256
-        noverlap = nperseg // 2
+        window = 'hann' #window function used to isolate the signal at each time segment. Here it is set to 'hann', which is a common choice for audio signal processing.
+        nperseg = 256 #length of each segment in the STFT calculation, typically set to a power of 2 to improve the efficiency of the FFT algorithm.
+        noverlap = nperseg // 2 #the number of samples that overlap between adjacent segments in the STFT calculation. Here it is set to half the length of each segment.
 
         # Apply the STFT to the signal
         f, t, Zxx = signal.stft(arrythmiaData, fs=fs, window=window, nperseg=nperseg, noverlap=noverlap)
@@ -163,7 +159,7 @@ class AudioProcessor:
         plt.clf()
 
         # Plot the spectrogram
-        plt.pcolormesh(t, f, Zxx_db)
+        plt.pcolormesh(t, f[f <= 1000], Zxx_db[f <= 1000])#limit freq of spectrogram
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
         plt.colorbar(format='%+2.0f dB')
