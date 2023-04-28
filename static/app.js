@@ -285,7 +285,7 @@ function handleSliderChange() {
         const reader = new FileReader();
         reader.onload = () => {
           const csvdata = reader.result;
-          const arrdata = csvdata.split("\n").map(parseFloat);
+          const arrdata = csvdata.split("\n").map(row => parseFloat(row.split(",")[1]));
           Plotly.update(outputSignal, { y: [arrdata] }, {}, 0);
         };
         reader.readAsText(result);
