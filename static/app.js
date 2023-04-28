@@ -125,6 +125,7 @@ function createPlot(graphElement) {
     },
     yaxis: {
       title: "Amplitude",
+      fixedrange: true,
     },
     dragmode:false,
   };
