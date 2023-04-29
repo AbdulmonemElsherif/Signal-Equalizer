@@ -183,16 +183,19 @@ function plotGraphs(x, y) {
   Plotly.update(inputSignal, {}, config);
   Plotly.update(outputSignal, {}, config);
   plotInitialSpectrograms();
-  
 }
 
 function convertCsvToTrace(csvdata) {
+  //maps the values of column 1 and column 2 of the CSV data to two arrays x and y
+  //slices the arrays to take only the first 1000 elements (to limit the plot size)
   let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
   let y = csvdata.map((arrRow) => arrRow.col2).slice(0, 1000);
   let uploadedSignal = { x: x, y: y };
   if (signals.length == 0) {
     signals.push(uploadedSignal);
   }else{
+  //If there is already a trace object in the array, the existing trace object is removed using the pop() method 
+  //and the new uploaded signal trace object is pushed into the array using the push() method
   signals.pop();
   signals.push(uploadedSignal);
 }
@@ -214,6 +217,7 @@ function processAudio(file) {
         //get time from sampling frequency as  fs = 1/T
         time.push(index / sampleRate);
       }
+      //updates a Plotly chart with the time and audio data arrays
       Plotly.update(outputSignal, { x: [time], y: [audioDataArray] }, {}, 0);
       
     });
@@ -235,6 +239,7 @@ function updateSliders(selectedIndex) {
 function getSliderValues() {
   let sliderValues = [];
   selectedModeIndex = document.getElementById("mode-select").selectedIndex;
+  // uses the forEach() method to iterate over all the elements with the class name "uniformmode" and pushes their values into an array called sliderValues. 
   if (selectedModeIndex === 1) {
     document.querySelectorAll(".uniformmode").forEach((slider) => {
       sliderValues.push(slider.value);
@@ -260,6 +265,7 @@ function getSliderValues() {
 }
 
 function setUniformSliderRange(maxfreq){
+  //sets the labels of uniform sliders
   let range=0;
   document.querySelectorAll(".uniformrangelabel").forEach((label) => {
     label.innerHTML=`${range/1000}`
@@ -270,6 +276,7 @@ function setUniformSliderRange(maxfreq){
 
 function handleSliderChange() {
   sliderValues = getSliderValues();
+  //used to create key-value pairs from form data or other types of data and then send it to a server using the fetch() method or the XMLHttpRequest object
   var formData = new FormData();
   formData.append("file", file);
   formData.append("sliderValues", JSON.stringify(sliderValues));
@@ -314,6 +321,7 @@ function spectrogramSliderChange(outputfile) {
     body: formData,
   })
     .then((response) => response.json())
+    //update the image source of an HTML element
     .then((result) => {
       const outputSpectrogram = document.getElementById("outputspectrogram");
       outputSpectrogram.src = "data:image/png;base64," + result.image;
