@@ -107,7 +107,7 @@ class AudioProcessor:
                 if gainValue >= 0:
                     magnitude[index] =- magnitude[index]
                 else:
-                    magnitude[index] *= -gainValue
+                    magnitude[index] *= -gainValue #it applies a gain reduction
             gainValuesIterator += 1
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)

@@ -159,7 +159,7 @@ function readAudioFile(file) {
         time.push(index / sampleRate);
       }
       // find the maximum time value in the audio file
-      maxTime = audioDataArray.length / sampleRate;
+      maxTime = time[time.length - 1];
       document.querySelectorAll(".slider").forEach((slider) => {
         slider.value = 0;
       });
@@ -215,7 +215,7 @@ function processAudio(file) {
         time.push(index / sampleRate);
       }
       Plotly.update(outputSignal, { x: [time], y: [audioDataArray] }, {}, 0);
-      maxTime=time[time.length-1]
+      
     });
 }
 
