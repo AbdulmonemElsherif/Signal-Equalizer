@@ -54,9 +54,9 @@ document
       let fileURL = URL.createObjectURL(file);
       inputAudio.src = fileURL;
       outputAudio.src = fileURL;
-      var formData = new FormData();
-      formData.append("audioFile", file);
-      readAudioFile(formData);
+      // var formData = new FormData();
+      // formData.append("audioFile", file);
+      readAudioFile(file);
     } else {
       // Create a new file reader instance
       const reader = new FileReader();
@@ -139,7 +139,10 @@ function createPlot(graphElement) {
   Plotly.newPlot(graphElement, [], layout, config);
 }
 
-function readAudioFile(formData) {
+function readAudioFile(file) {
+  var formData = new FormData();
+  formData.append("audioFile", file);
+  let maxFreq=0;
   fetch("/readAudioFile", {
     method: "POST",
     body: formData,
@@ -180,6 +183,7 @@ function plotGraphs(x, y) {
   Plotly.update(inputSignal, {}, config);
   Plotly.update(outputSignal, {}, config);
   plotInitialSpectrograms();
+  
 }
 
 function convertCsvToTrace(csvdata) {

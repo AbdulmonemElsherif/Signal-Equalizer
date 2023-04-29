@@ -40,9 +40,7 @@ class AudioProcessor:
         audio_data, sr = librosa.load(audio_file, sr=None)
         output=self.perform_fft(audio_data,sr)
         maxfreq=round(np.max(output['frequency']))
-        print(maxfreq)
         self.get_uniform_frequency_bands(maxfreq)
-        print(self.uniformFrequencyBands)
         return {'audioData':audio_data.tolist(),'sampleRate':sr,'maxFreq':maxfreq}
 
     def perform_fft(self, audioData, sr):
@@ -82,7 +80,7 @@ class AudioProcessor:
                 if gainValue >= 0:
                     magnitude[index] *= gainValue
                 else:
-                    magnitude[index] =- magnitude[index]
+                    magnitude[index] =- magnitude[index] #noise cancellation, multiplies the magnitude value at the index with -1, effectively flipping the sign of the magnitude.
             gainValuesIterator += 1
         modified_signal = self.perform_ifft(magnitude * np.exp(1j * phase))
         time_domain_signal = np.real(modified_signal)
@@ -119,16 +117,19 @@ class AudioProcessor:
 
     def plot_spectrogram(self,audio_data,sample_rate):
         # Generate the spectrogram
-        hop_length = 1000
-        n_fft = 2048
-        spectrogram = librosa.feature.melspectrogram(y=audio_data, sr=sample_rate, n_fft=n_fft, hop_length=hop_length)
+        hop_length = 1000#This is the number of samples between the start of each frame #512
+        #if the signal has a sample rate of 44100 samples per second, and the hop length is set to 22050, then each frame will have a duration of 0.5 seconds, with the start of each new frame shifted by 0.5 seconds relative to the start of the previous frame. 
+        n_fft = 2048#number of points in the Fast Fourier Transform (FFT) used to compute the spectrogram
+        #equivalent to number of samples to be processed at once to obtain the frequency content of that segment of the signal.
+        spectrogram = librosa.feature.melspectrogram(y=audio_data, sr=sample_rate, n_fft=n_fft, hop_length=hop_length)#Internally, the function computes the short-time Fourier transform (STFT) 
         # Convert the spectrogram to decibels
+        #use STFT to compute the spectrogram because it allows us to analyze the frequency content of a signal over time
         spectrogram = librosa.power_to_db(spectrogram, ref=np.max)
         # Plot the spectrogram
         plt.figure(figsize=(10, 4))
         librosa.display.specshow(spectrogram, y_axis='mel', fmax=20000, x_axis='time')
-        plt.colorbar(format='%+2.0f dB')
-        plt.tight_layout()
+        plt.colorbar(format='%+2.0f dB')#2 specifies the total number of digits displayed, and the 0 specifies the number of decimal places, f float
+        plt.tight_layout()# adjusts the padding between subplots to make sure there is no overlapping text, labels or other elements in the plot
         # Save the plot as an image
         buf = io.BytesIO()
         plt.savefig(buf, format='png')
