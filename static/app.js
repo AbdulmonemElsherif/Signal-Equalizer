@@ -149,6 +149,8 @@ function readAudioFile(formData) {
       let audioDataArray = result.audioData;
       let time = [];
       sampleRate = result.sampleRate;
+      maxFreq = result.maxFreq;
+      setUniformSliderRange(maxFreq);
       for (let index = 0; index < audioDataArray.length; index++) {
         //get time from sampling frequency as  fs = 1/T
         time.push(index / sampleRate);
@@ -253,6 +255,15 @@ function getSliderValues() {
   return sliderValues;
 }
 
+function setUniformSliderRange(maxfreq){
+  let range=0;
+  document.querySelectorAll(".uniformrangelabel").forEach((label) => {
+    label.innerHTML=`${range/1000}`
+    range = range + Math.round(maxfreq / 10);
+    label.innerHTML += `-${range/1000}kHz`;
+  });
+}
+
 function handleSliderChange() {
   sliderValues = getSliderValues();
   var formData = new FormData();
@@ -330,6 +341,7 @@ function linking(firstGraph, secondGraph) {
       range: [xaxis.range[0], xaxis.range[1]],
     },
     yaxis: {
+      fixedrange:true,
       range: [yaxis.range[0], yaxis.range[1]],
     },
   };

@@ -17,11 +17,18 @@ matplotlib.use('Agg')
 
 class AudioProcessor:
     def __init__(self):
-        self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
+        # self.uniformFrequencyBands = [[20, 2000], [2000, 4000], [4000, 6000], [6000, 8000], [8000, 10000], [10000, 12000], [12000, 14000], [14000, 16000], [16000, 18000], [18000, 20000]]
+        self.uniformFrequencyBands = []
         self.vowelFrequencyBands =  [[4000,10000],[1200,5000],[490, 2800]]
         self.musicFrequencyBands=[[0,500],[500,1200],[1200,7000]]
         self.arrythmiaFrequencyBand=[[0,25]]#[100,130],
         self.fmax=0
+
+    def get_uniform_frequency_bands(self,max_freq):
+        frequencies = np.linspace(0, max_freq, num=11)
+        for i in range(len(frequencies)-1):
+            band = [round(frequencies[i]), round(frequencies[i+1])]
+            self.uniformFrequencyBands.append(band)
 
     def read_arrythmia_data(self, csv_file):
         csv_data = pd.read_csv(csv_file)
@@ -31,7 +38,12 @@ class AudioProcessor:
 
     def upload_audio(self, audio_file):
         audio_data, sr = librosa.load(audio_file, sr=None)
-        return {'audioData':audio_data.tolist(),'sampleRate':sr}
+        output=self.perform_fft(audio_data,sr)
+        maxfreq=round(np.max(output['frequency']))
+        print(maxfreq)
+        self.get_uniform_frequency_bands(maxfreq)
+        print(self.uniformFrequencyBands)
+        return {'audioData':audio_data.tolist(),'sampleRate':sr,'maxFreq':maxfreq}
 
     def perform_fft(self, audioData, sr):
         audioData_np = np.array(audioData)
