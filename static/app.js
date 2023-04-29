@@ -238,22 +238,22 @@ function getSliderValues() {
   if (selectedModeIndex === 1) {
     document.querySelectorAll(".uniformmode").forEach((slider) => {
       sliderValues.push(slider.value);
-      modeBool[0] = 1;
+      modeBool = [1, 0, 0, 0];
     });
   } else if (selectedModeIndex === 2) {
     document.querySelectorAll(".vowels").forEach((slider) => {
       sliderValues.push(slider.value);
-      modeBool[1] = 1;
+      modeBool = [0, 1, 0, 0];
     });
   } else if (selectedModeIndex === 3) {
     document.querySelectorAll(".music").forEach((slider) => {
       sliderValues.push(slider.value);
-      modeBool[2] = 1;
+      modeBool = [0, 0, 1, 0];
     });
   } else if (selectedModeIndex === 4) {
     document.querySelectorAll(".arrythmia").forEach((slider) => {
       sliderValues.push(slider.value);
-      modeBool[3] = 1;
+      modeBool = [0, 0, 0, 1];
     });
   }
   return sliderValues;
