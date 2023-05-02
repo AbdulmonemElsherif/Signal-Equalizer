@@ -96,13 +96,14 @@ document.querySelectorAll(".stopbutton").forEach((button, index) => {
 document
   .querySelector("#spectrogram-toggle")
   .addEventListener("change", (event) => {
-    document.querySelectorAll(".spectrogram").forEach((spectrogram) => {
+    document.getElementById("spectrogram")
       if (event.target.checked) {
-        spectrogram.style.display = "block";
+        spectrogram.style.display = "flex";
+        document.getElementById("audio").style.display = "none";
       } else {
         spectrogram.style.display = "none";
+        document.getElementById("audio").style.display = "flex";
       }
-    });
   });
 
 //---------------------------------------FUNCTIONS----------------------------------------------------------

@@ -11,10 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
-    <!-- <script src="wavesurfer.min.js"></script> -->
     <script src="https://kit.fontawesome.com/2c36e9b7b1.js" crossorigin="anonymous"></script>
-    <!-- <script src="https://unpkg.com/wavesurfer.js"></script> -->
-    <!-- <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js"></script> -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/plotly-2.18.2.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="/static/style.css">
@@ -47,7 +44,6 @@
         </div>
         
         <br>
-        <!-- <div class="row"> -->
             <div class="col-md-12"  >
                 <p>Equalizer Sliders</p>
                 <div  id="equalizer-container" style="display: none;">
@@ -141,30 +137,19 @@
                         </div>
                 </div>
             </div>
-        <!-- </div> -->
     </div>
     <div class="flex-column w-100 px-3">
-    <!-- <header> -->
         <div class="bg-dark">
             <h3 class=" text-light p-3 ">Signal Equalizer</h3>
-            
         </div>
-    <!-- </header> -->
-            <div class="row">
-                <div class="col-md-6">
+            <div class="row" id="audio" style="display: flex;">
+                <div class="col-md-6" >
                     <div class="card mb-3">
                         <div class="card-header">
                             <h5 class="mb-0">Input Signal Viewer</h5>
                         </div>
                         <div class="card-body mb-0">
                             <div id="inputwave" style="width:100%; height:250px;"></div>
-                            <!-- <div class="inputcontrols">
-                                <button class="playbutton btn btn-primary"><i class="fas fa-play"></i></button>
-                                <button class="pausebutton btn btn-primary"><i class="fas fa-pause"></i></button>
-                                <button class="stopbutton btn btn-primary"><i class="fas fa-stop"></i></button>
-                                <input type="range" id="input-signal-speed" class="playbackRateSlider" min="0.25" max="2" step="0.25" value="1">
-                            </div> -->
-                            
                             <audio controls style="width: 90%;" accept="audio/*" id="inputaudio" src="" class="audiofile"></audio>
                             <button class="stopbutton btn btn-secondary" style="position: relative; top:-1.5rem ;"><i class="fas fa-stop"></i></button>
                             </div>
@@ -177,38 +162,30 @@
                             </div>
                             <div class="card-body">
                                 <div id="outputwave" style="width:100%; height:250px;"></div>
-                                <!-- <div class="outputcontrols">
-                                    <button class="playbutton btn btn-primary"><i class="fas fa-play"></i></button>
-                                    <button class="pausebutton btn btn-primary"><i class="fas fa-pause"></i></button>
-                                    <button class="stopbutton btn btn-primary"><i class="fas fa-stop"></i></button>
-                                    <input type="range" id="input-signal-speed" class="playbackRateSlider" min="0.25" max="2" step="0.25" value="1">
-                                </div> -->
                             <audio controls id="outputaudio" accept="audio/*" style="width: 90%;" src="" class="audiofile"></audio>
                             <button class="stopbutton btn btn-secondary" style="position: relative; top:-1.5rem ;"><i class="fas fa-stop"></i></button>
                                 </div>
                             </div>
                         </div>
                 </div>
-            <div class="row">
+            <div class="row" id="spectrogram" style="display: none;">
                 <div class="col-md-6">
-                    <div class="card mb-3 spectrogram" style="display: none;">
+                    <div class="card mb-3 spectrogram" >
                         <div class="card-header">
                             <h5>Input Spectrogram</h5>
                         </div>
                         <div class="card-body" >
                             <img id="inputspectrogram" class="spectrogram" width="100%">
-                            <!-- <canvas id="input-spectrogram-canvas"></canvas> -->
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card mb-3 spectrogram" style="display: none;">
+                    <div class="card mb-3 spectrogram" >
                         <div class="card-header">
                             <h5>Output Spectrogram</h5>
                         </div>
                         <div class="card-body" >
                             <img id="outputspectrogram" class="spectrogram" width="100%">
-                            <!-- <canvas id="output-spectrogram-canvas"></canvas> -->
                         </div>
                     </div>
                 </div>
