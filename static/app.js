@@ -219,7 +219,6 @@ function processAudio(file) {
       }
       //updates a Plotly chart with the time and audio data arrays
       Plotly.update(outputSignal, { x: [time], y: [audioDataArray] }, {}, 0);
-      
     });
 }
 
