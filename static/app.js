@@ -230,7 +230,7 @@ function updateSliders(selectedIndex) {
   equalizerContainer.style.display = "block";
   sliderGroups.forEach((sliderGroup, index) => {
     if (index === selectedIndex - 1) {
-      sliderGroup.style.display = "block";
+      sliderGroup.style.display = "flex";
     } else {
       sliderGroup.style.display = "none";
     }

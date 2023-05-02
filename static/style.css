@@ -1,0 +1,34 @@
+
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.slider-group{
+    margin-top: 5em;
+    justify-content: space-evenly;
+}
+label {
+    transform: rotate(-90deg);
+    position: relative;
+    top:90px;
+    left: 20px;
+}
+
+input[type="range"] {
+    writing-mode: bt-lr;
+    /* for vertical orientation */
+    -webkit-appearance: slider-vertical;
+    /* for webkit browsers */
+    /* set width to match desired height */
+    height: 200px;
+    /* set height to desired length */
+}
+
+
+.slider-value {
+    font-size: 14px;
+    position: relative;
+    left:60px;
+}
