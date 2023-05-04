@@ -13,7 +13,8 @@ label {
     transform: rotate(-90deg);
     position: relative;
     top:90px;
-    left: 20px;
+    /* left: 20px; */
+    left:-20px;
 }
 
 input[type="range"] {
