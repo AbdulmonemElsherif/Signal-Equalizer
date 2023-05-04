@@ -19,8 +19,8 @@ let signals = [];
 let modeBool = [0, 0, 0, 0];
 //--------------------------------------EVENT LISTENERS---------------------------------------------
 
-document.querySelectorAll(".slider").forEach((slider) => {
-  slider.addEventListener("change", handleSliderChange);
+document.querySelectorAll(".slider").forEach((slider,index) => {
+  slider.addEventListener("change",()=> handleSliderChange(index));
 });
 
 // Add event listener to mode selector
@@ -44,6 +44,7 @@ window.addEventListener("load", function () {
   });
 });
 
+//read input files
 document
   .getElementById("formFile")
   .addEventListener("change", async (event) => {
@@ -81,6 +82,7 @@ document
     }
   });
 
+//stop button for audio
 document.querySelectorAll(".stopbutton").forEach((button, index) => {
   button.addEventListener("click", () => {
     if (index === 0) {
@@ -93,6 +95,7 @@ document.querySelectorAll(".stopbutton").forEach((button, index) => {
   });
 });
 
+//hide graph and show spectrogram and vice versa depending on the checkbox
 document
   .querySelector("#spectrogram-toggle")
   .addEventListener("change", (event) => {
@@ -168,6 +171,7 @@ function readAudioFile(file) {
     });
 }
 
+//plot graphs
 function plotGraphs(x, y) {
   var config = {
     dragmode: "pan",
@@ -237,6 +241,7 @@ function updateSliders(selectedIndex) {
   });
 }
 
+//get all slider values to apply effect on audio
 function getSliderValues() {
   let sliderValues = [];
   selectedModeIndex = document.getElementById("mode-select").selectedIndex;
@@ -265,6 +270,7 @@ function getSliderValues() {
   return sliderValues;
 }
 
+//sets range of frequencies in uniform range depending on the maximum freq
 function setUniformSliderRange(maxfreq){
   //sets the labels of uniform sliders
   let range=0;
@@ -275,7 +281,14 @@ function setUniformSliderRange(maxfreq){
   });
 }
 
-function handleSliderChange() {
+//function that changes slider value depending on the index of the changed slider
+function setSliderValue(index){
+  document.querySelectorAll("span")[index].innerHTML = document.querySelectorAll(".slider")[index].value;
+}
+
+//function that applies changes of slider on audio and spectrogram and slider value
+function handleSliderChange(index) {
+  setSliderValue(index);
   sliderValues = getSliderValues();
   //used to create key-value pairs from form data or other types of data and then send it to a server using the fetch() method or the XMLHttpRequest object
   var formData = new FormData();
@@ -314,6 +327,7 @@ function handleSliderChange() {
   }
 }
 
+//function that applies changes on output spectrogram depending on slider changes
 function spectrogramSliderChange(outputfile) {
   var formData = new FormData();
   formData.append("outputFile", outputfile);
@@ -329,6 +343,7 @@ function spectrogramSliderChange(outputfile) {
     });
 }
 
+//function to plot spectrograms at the very beginning
 function plotInitialSpectrograms() {
   var formData = new FormData();
   formData.append("file", file);
@@ -361,6 +376,7 @@ function linking(firstGraph, secondGraph) {
   Plotly.update(secondGraph, {}, update);
 }
 
+// function called in plotly eventlistener to prevent user from panning outside
 function checkBoundaries(graphElement,eventData) {
   if (maxTime) {
     var xMin = eventData["xaxis.range[0]"];

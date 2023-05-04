@@ -33,3 +33,28 @@ input[type="range"] {
     position: relative;
     left:60px;
 }
+
+/* slider track */
+/* input[type="range"]::-webkit-slider-runnable-track {
+  background-color: #add8e6;
+  border-radius: 0.5rem;
+  height: 1rem;
+} */
+
+/* slider thumb */
+/* input[type="range"]::-webkit-slider-thumb { */
+    /* Override default look */
+  /* -webkit-appearance: none;  */
+  /* appearance: none; */
+  /* Centers thumb on the track */
+  /* margin-top: -4px; */
+  /* background-color: #808080; */
+  /* border-radius: 0.5rem; */
+  /* height: 1.5rem; */
+  /* width: 1rem; */
+/* } */
+/* 
+input[type="range"]:focus::-webkit-slider-thumb {
+  outline: 3px solid #808080;
+  outline-offset: 0.125rem;
+} */
