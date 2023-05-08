@@ -19,35 +19,34 @@
 </head>
 <body>
     <div class="d-flex ">
-    <div class="flex-column p-3">
-        <div class="mb-3">
-            <input class="form-control" type="file" id="formFile">
-        </div>
-        <div class="equalizer-mode">
-            <select id="mode-select" class="form-select form-select">
-                <option value="select-mode" selected disabled>Select Mode</option>
-                <option value="uniform-range">Uniform Range Mode</option>
-                <option value="vowels">Vowels Mode</option>
-                <option value="musical-instruments">Musical Instruments Mode</option>
-                <option value="biological-signal-abnormalities">Biological Signal Abnormalities
-                </option>
-            </select>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="spectrogram-toggle">
-                    <!-- <label class="form-check-label" for="spectrogram-toggle">Show Spectrograms</label> -->
-                    Show Spectrograms
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="flex-column w-100 px-3">
+    <div class="flex-column w-100 ">
         <div class="bg-dark">
             <h3 class=" text-light p-3">Signal Equalizer</h3>
         </div>
+            <div class="d-flex justify-content-around">
+                <div class="mb-3 w-25 ">
+                    <input class="form-control" type="file" id="formFile">
+                </div>
+                <div class="equalizer-mode w-25 ">
+                    <select id="mode-select" class="form-select form-select">
+                        <option value="select-mode" selected disabled>Select Mode</option>
+                        <option value="uniform-range">Uniform Range Mode</option>
+                        <option value="vowels">Vowels Mode</option>
+                        <option value="musical-instruments">Musical Instruments Mode</option>
+                        <option value="biological-signal-abnormalities">Biological Signal Abnormalities
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <div class="row">
+                </div>
+                <!-- <div class="col-md-12"> -->
+                    <div class="form-check h5 mt-2">
+                        <input type="checkbox" class="form-check-input " id="spectrogram-toggle">
+                        Show Spectrograms
+                    </div>
+                <!-- </div> -->
+            </div>
         <div class="d-flex flex-column w-100" >
         <div>
             <div class="row" id="audio" style="display: flex;">
