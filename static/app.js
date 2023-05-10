@@ -179,11 +179,17 @@ function plotGraphs(x, y) {
   if (inputSignal.data.length === 0) {
     Plotly.addTraces(inputSignal, { x: x, y: y });
     Plotly.addTraces(outputSignal, { x: x, y: y });
+    Plotly.addTraces(inputSignal, { x: [0,0], y: [-1*Math.max(y),Math.max(y)] });
+    Plotly.addTraces(outputSignal, { x: [0,0], y: [-1*Math.max(y),Math.max(y)]  });
   } else {
+    Plotly.deleteTraces(inputSignal, 0);
+    Plotly.deleteTraces(outputSignal, 0);
     Plotly.deleteTraces(inputSignal, 0);
     Plotly.deleteTraces(outputSignal, 0);
     Plotly.addTraces(inputSignal, { x: x, y: y });
     Plotly.addTraces(outputSignal, { x: x, y: y });
+    Plotly.addTraces(inputSignal, { x: [0,0], y: [-1*Math.max(y), Math.max(y)] });
+    Plotly.addTraces(outputSignal, { x: [0,0], y: [-1*Math.max(y), Math.max(y)] });
   }
   Plotly.update(inputSignal, {}, config);
   Plotly.update(outputSignal, {}, config);
@@ -391,3 +397,39 @@ function checkBoundaries(graphElement,eventData) {
     }
   }
 }
+
+// // Add an event listener to the audio element to update the cursor position during playback
+document.querySelectorAll("audio").forEach((audio, index) => {
+  audio.addEventListener("timeupdate", (event) => {
+    const currentTime = event.target.currentTime;
+    updateCursor(currentTime, index);
+  });
+});
+
+function updateCursor(currentTime, index) {
+  // const yValues = inputSignal.data[0].y;
+  // const max = Math.max(yValues);
+  // console.log(max);
+  if (index === 0)
+    Plotly.update(
+      inputSignal,
+      {
+        x: [[currentTime, currentTime]],
+        y: [[-1, 1]],
+      },
+      {},
+      [1]
+    );
+  else
+    Plotly.update(
+      outputSignal,
+      {
+        x: [[currentTime, currentTime]],
+        y: [[-1, 1]],
+      },
+      {},
+      [1]
+    );
+    // console.log(Math.max(inputSignal.data[0].y))
+}
+

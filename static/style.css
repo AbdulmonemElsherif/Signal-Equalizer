@@ -21,6 +21,7 @@ input[type="range"] {
     writing-mode: bt-lr;
     /* for vertical orientation */
     -webkit-appearance: slider-vertical;
+    appearance: none;
     /* for webkit browsers */
     /* set width to match desired height */
     height: 200px;
