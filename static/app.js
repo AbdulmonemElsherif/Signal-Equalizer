@@ -200,7 +200,8 @@ function convertCsvToTrace(csvdata) {
   //maps the values of column 1 and column 2 of the CSV data to two arrays x and y
   //slices the arrays to take only the first 1000 elements (to limit the plot size)
   let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
-  let y = csvdata.map((arrRow) => arrRow.col2).slice(0, 1000);
+  let x = csvdata.map((arrRow) => arrRow.col1).slice(0,2000);
+  let y = csvdata.map((arrRow) => arrRow.col2).slice(34000, 36000);
   let uploadedSignal = { x: x, y: y };
   if (signals.length == 0) {
     signals.push(uploadedSignal);
@@ -210,6 +211,7 @@ function convertCsvToTrace(csvdata) {
   signals.pop();
   signals.push(uploadedSignal);
 }
+maxTime=2000;
 }
 
 function processAudio(file) {
@@ -314,8 +316,10 @@ function handleSliderChange(index) {
         const reader = new FileReader();
         reader.onload = () => {
           const csvdata = reader.result;
+          let arr=[NaN];
           const arrdata = csvdata.split("\n").map(row => parseFloat(row.split(",")[1]));
-          Plotly.update(outputSignal, { y: [arrdata] }, {}, 0);
+          const arr3 = arr.concat(arrdata);
+          Plotly.update(outputSignal, { y: [arr3] }, {}, 0);
         };
         reader.readAsText(result);
       });
