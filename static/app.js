@@ -199,7 +199,6 @@ function plotGraphs(x, y) {
 function convertCsvToTrace(csvdata) {
   //maps the values of column 1 and column 2 of the CSV data to two arrays x and y
   //slices the arrays to take only the first 1000 elements (to limit the plot size)
-  let x = csvdata.map((arrRow) => arrRow.col1).slice(0, 1000);
   let x = csvdata.map((arrRow) => arrRow.col1).slice(0,2000);
   let y = csvdata.map((arrRow) => arrRow.col2).slice(34000, 36000);
   let uploadedSignal = { x: x, y: y };
