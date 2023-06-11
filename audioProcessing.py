@@ -21,7 +21,7 @@ class AudioProcessor:
         self.uniformFrequencyBands = []
         self.vowelFrequencyBands =  [[4000,10000],[1200,5000],[490, 2800]]
         self.musicFrequencyBands=[[0,500],[500,1200],[1200,7000]]
-        self.arrythmiaFrequencyBand=[[0.5,0.15]]#[100,130],
+        self.arrythmiaFrequencyBand=[[0.5,0.15]]#[100,130],0.5,0.15
         self.fmax=0
 
     def get_uniform_frequency_bands(self,max_freq):
