@@ -43,12 +43,12 @@ master
 
 ### Project Features
 Website has the following features:
-> UI that contains:
+ UI that contains:
 > 1. Two signal viewers, one for the input and one for the output signals. The two viewers should allow the 
 signals to run in time in a synchronous way (with controls for playing and pausing and speed)
 > 2. Two spectrograms, one for the input and one for the output signals.
 
-> The user can switch between the following modes easily (through a combobox)
+ The user can switch between the following modes easily (through a combobox)
 > 1. Uniform Range Mode: where the total frequency range of the input signal is divided uniformly into 10 equal 
 ranges of frequencies, each is controlled by one slider in the UI
 
